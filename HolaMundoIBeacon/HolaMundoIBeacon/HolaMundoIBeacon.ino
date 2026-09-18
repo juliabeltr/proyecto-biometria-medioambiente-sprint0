@@ -1,17 +1,11 @@
-// -*-c++-*-
 
 // --------------------------------------------------------------
-//
-// 
-// 
-//
 // --------------------------------------------------------------
-
 // https://learn.sparkfun.com/tutorials/nrf52840-development-with-arduino-and-circuitpython
-
 // https://stackoverflow.com/questions/29246805/can-an-ibeacon-have-a-data-payload
 
 // --------------------------------------------------------------
+// Júlia Beltrán Girbés
 // --------------------------------------------------------------
 #include <bluefruit.h>
 
@@ -170,11 +164,13 @@ void loop () {
   };
 
   // elPublicador.laEmisora.emitirAnuncioIBeaconLibre ( &datos[0], 21 );
-  elPublicador.laEmisora.emitirAnuncioIBeaconLibre ( "MolaMolaMolaMolaMolaM", 21 );
+ 	elPublicador.emitirAnuncioLibre(
+  		"MolaMolaMolaMolaMolaM", 21
+	);
 
   esperar( 2000 );
 
-  elPublicador.laEmisora.detenerAnuncio();
+  elPublicador.detenerAnuncio();
   
   // 
   // 

@@ -20,15 +20,15 @@ private:
 	'-', 'P', 'R', 'O', 'Y', '-', '3', 'A'
 	};
 
+EmisoraBLE laEmisora {
+    "GTI-3A",
+    0x004c,
+    4
+  };
+
   // ............................................................
   // ............................................................
 public:
-  EmisoraBLE laEmisora {
-	"GTI-3A", //  nombre emisora
-	  0x004c, // fabricanteID (Apple)
-	  4 // txPower
-	  };
-  
   const int RSSI = -53; // por poner algo, de momento no lo uso
 
   // ............................................................
@@ -107,7 +107,14 @@ public:
 
 	(*this).laEmisora.detenerAnuncio();
   } // ()
-	
+
+  void emitirAnuncioLibre(const char * carga, uint8_t tamanyoCarga) {
+    (*this).laEmisora.emitirAnuncioIBeaconLibre(carga, tamanyoCarga);
+  }
+
+  void detenerAnuncio() {
+    (*this).laEmisora.detenerAnuncio();
+  }
 }; // class
 
 // --------------------------------------------------------------

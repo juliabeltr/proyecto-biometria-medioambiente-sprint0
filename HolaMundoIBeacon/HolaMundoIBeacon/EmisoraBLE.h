@@ -77,6 +77,15 @@ public:
 	
   // .........................................................
   // .........................................................
+/**
+ * @brief Inicializa la emisora BLE.
+ *
+ * Diseño lógico:
+ * encenderEmisora()
+ *
+ * Inicializa Bluefruit y garantiza que no exista
+ * ningún anuncio activo inicialmente.
+ */
   void encenderEmisora() {
 	// Serial.println ( "Bluefruit.begin() " );
 	 Bluefruit.begin(); 
@@ -99,6 +108,12 @@ public:
 
   // .........................................................
   // .........................................................
+/**
+ * @brief Detiene el anuncio BLE si está activo.
+ *
+ * Diseño lógico:
+ * detenerAnuncio()
+ */
   void detenerAnuncio() {
 
 	if ( (*this).estaAnunciando() ) {
@@ -111,6 +126,15 @@ public:
   // .........................................................
   // estaAnunciando() -> Boleano
   // .........................................................
+/**
+ * @brief Indica si existe actualmente un anuncio BLE activo.
+ *
+ * Diseño lógico:
+ * estaAnunciando() -> B
+ *
+ * @return true si la emisora está anunciando; false en caso contrario.
+ */
+
   bool estaAnunciando() {
 	return Bluefruit.Advertising.isRunning();
   } // ()

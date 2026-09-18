@@ -231,6 +231,12 @@ public:
   */
   void emitirAnuncioIBeaconLibre( const char * carga, const uint8_t tamanyoCarga ) {
 
+	if (carga == nullptr) {
+    		Globales::elPuerto.escribir(
+      			"Error: carga nula en emitirAnuncioIBeaconLibre()\n"
+    		);
+    	return;
+  	}
 	(*this).detenerAnuncio(); 
 
 	Bluefruit.Advertising.clearData();

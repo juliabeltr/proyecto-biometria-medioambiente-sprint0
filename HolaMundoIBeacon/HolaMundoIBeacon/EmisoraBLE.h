@@ -1,8 +1,7 @@
 // -*- mode: c++ -*-
 
 // ----------------------------------------------------------
-// Jordi Bataller i Mascarell
-// 2019-07-07
+// Júlia Beltrán Girbés
 // ----------------------------------------------------------
 #ifndef EMISORA_H_INCLUIDO
 #define EMISORA_H_INCLUIDO
@@ -22,6 +21,12 @@
 
 // ----------------------------------------------------------
 // ----------------------------------------------------------
+/**
+ * @brief Gestiona la emisora Bluetooth Low Energy de la placa.
+ *
+ * Permite inicializar Bluefruit, emitir y detener anuncios iBeacon,
+ * añadir servicios BLE y gestionar callbacks de conexión.
+ */
 class EmisoraBLE {
 private:
 

@@ -81,7 +81,17 @@ public class MainActivity extends AppCompatActivity {
     // --------------------------------------------------------------
     private void mostrarInformacionDispositivoBTLE( ScanResult resultado ) {
 
+        if (resultado == null) {
+        Log.d(ETIQUETA_LOG, "Resultado de escaneo nulo");
+        return;
+        }
+        
         BluetoothDevice bluetoothDevice = resultado.getDevice();
+
+        if (resultado.getScanRecord() == null) {
+        Log.d(ETIQUETA_LOG, "El dispositivo no contiene ScanRecord");
+        return;
+        }
         byte[] bytes = resultado.getScanRecord().getBytes();
         int rssi = resultado.getRssi();
 
@@ -213,11 +223,27 @@ public class MainActivity extends AppCompatActivity {
 
         BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
 
+        if (bta == null) {
+            Log.d(ETIQUETA_LOG,
+                "inicializarBlueTooth(): el dispositivo no dispone de Bluetooth");
+            return;
+        }
+
         Log.d(ETIQUETA_LOG, " inicializarBlueTooth(): habilitamos adaptador BT ");
 
-        bta.enable();
+        if (!bta.isEnabled()) {
+            bta.enable();
+        }
 
         Log.d(ETIQUETA_LOG, " inicializarBlueTooth(): habilitado =  " + bta.isEnabled() );
+
+        this.elEscanner = bta.getBluetoothLeScanner();
+
+        if (this.elEscanner == null) {
+            Log.d(ETIQUETA_LOG,
+                "inicializarBlueTooth(): no se ha podido obtener el escáner BLE");
+            return;
+        }
 
         Log.d(ETIQUETA_LOG, " inicializarBlueTooth(): estado =  " + bta.getState() );
 

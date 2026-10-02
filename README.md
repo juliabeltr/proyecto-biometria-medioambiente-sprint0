@@ -47,7 +47,7 @@ Cada capa solo conoce a la siguiente: el REST no accede a la base de datos y la 
 ## Despliegue
 
 ```bash
-git clone https://github.com/<usuario>/proyecto-biometria-medioambiente-sprint0.git
+git clone https://github.com/juliabeltr/proyecto-biometria-medioambiente-sprint0.git
 cd proyecto-biometria-medioambiente-sprint0
 git checkout develop
 npm install

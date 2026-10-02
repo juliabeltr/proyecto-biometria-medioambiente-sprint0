@@ -3,7 +3,7 @@
 //
 // Descripción: acceso a la base de datos SQLite de mediciones (componente bd).
 // Autor:       Júlia Beltrán Girbés
-// Fecha:       2026
+// Fecha:       02/10/2026
 // Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
 // Aportación:  Implementación de doc/bd_design.md. Solo guarda y recupera
 //              datos: no valida reglas de negocio ni contiene HTTP o JSON.

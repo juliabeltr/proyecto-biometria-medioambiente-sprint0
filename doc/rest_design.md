@@ -8,9 +8,10 @@ Medicion = ( id: N, tipo: Text, valor: R, latitud: R, longitud: R, fechaHora: Te
  --------- ServidorREST -------------------------
  |
  |  logica: LogicaMediciones
+ |  rutaWeb: Text
  |
  |
- logica: LogicaMediciones --> ServidorREST() -->
+ logica: LogicaMediciones, rutaWeb: Text --> ServidorREST() -->
  |
  |
  m: Medicion --> postMediciones() -->
@@ -32,6 +33,7 @@ Rutas (HTTP y JSON):
 | POST /mediciones | postMediciones() | `guardarMedicion()` |
 | GET /mediciones | getMediciones() | `recuperarMediciones()` |
 | GET /mediciones/ultima | getUltimaMedicion() | `recuperarUltimaMedicion()` |
+| GET /ux/, /navegador/, /navegador_fake/ | (ficheros estáticos) | sirve la interfaz web |
 
 Respuestas:
 
@@ -51,17 +53,4 @@ Respuestas:
 - Recibe `LogicaMediciones` en el constructor. Así los tests pueden sustituirla por una lógica simulada.
 - El servidor comprueba solo la forma de la petición: que el cuerpo sea JSON válido y que estén presentes los cinco campos `tipo`, `valor`, `latitud`, `longitud` y `fechaHora`. Comprobar si los valores son correctos (rangos, tipo de contaminante, fecha) es trabajo de la lógica.
 - El campo `id` del cuerpo, si llega, se ignora.
-- Los mensajes de error no revelan detalles internos (trazas, consultas SQL).
-- Los campos de la respuesta usan los mismos nombres que `Medicion`.
-- No se añaden rutas que no aparezcan en este diseño.
-
-## 3. Reglas generales
-
-- Lenguaje de programación: JavaScript (Node.js) con Express.
-- El encabezado de cada función o método incluye su diseño lógico dentro de un bloque de comentarios delimitado por líneas discontinuas (`--------------------`), con propósito, parámetros, tipos, retorno y errores.
-- El código debe ser lo más claro y autoexplicativo posible, de modo que apenas requiera comentarios adicionales.
-- Se generan tests automáticos con una lógica simulada para las tres rutas:
-  - POST correcto, JSON mal formado, campo ausente, datos rechazados y fallo interno;
-  - GET /mediciones con datos, con lista vacía y con fallo interno;
-  - GET /mediciones/ultima con datos, sin mediciones y con fallo interno.
-- El código no añade funcionalidades que no estén incluidas en el diseño.
+- Los mensajes de error no revelan detalles internos (trazas,

@@ -8,11 +8,15 @@
 // Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
 // Aportación:  Implementación de doc/rest_design.md. Solo recibe peticiones,
 //              llama a la lógica y devuelve JSON. No contiene lógica de
-//              negocio ni accede a la base de datos.
+//              negocio ni accede a la base de datos. Además sirve los
+//              ficheros estáticos de la interfaz web (ux, navegador y
+//              navegador_fake) para que página y API compartan origen.
 // =============================================================================
 
 const express = require("express");
+const path = require("path");
 
+const CARPETAS_WEB = ["ux", "navegador", "navegador_fake"];
 const CAMPOS_MEDICION = ["tipo", "valor", "latitud", "longitud", "fechaHora"];
 
 /*
@@ -23,25 +27,32 @@ class ServidorREST {
 
     /*
      * --------------------------------------------------------------
-     * Propósito: crea el servidor y registra las tres rutas del diseño.
-     *            La aplicación Express queda en this.app.
+     * Propósito: crea el servidor, registra las tres rutas del diseño y,
+     *            si se indica rutaWeb, sirve la interfaz web. La aplicación
+     *            Express queda en this.app.
      *
      * Diseño lógico:
-     *     logica: LogicaMediciones --> ServidorREST() -->
+     *     logica: LogicaMediciones, rutaWeb: Text --> ServidorREST() -->
      *
      * Parámetros:
      *     logica: LogicaMediciones. Lógica de negocio a la que se llama.
+     *     rutaWeb: Text. Carpeta que contiene ux, navegador y
+     *              navegador_fake. Si no se indica, no se sirve ninguna
+     *              página (caso de los tests de la API).
      * Retorno: ninguno.
      * Errores: ninguno.
      * --------------------------------------------------------------
      */
-    constructor(logica) {
+    constructor(logica, rutaWeb) {
         this.logica = logica;
         this.app = express();
         this.app.use(express.json());
         this.app.post("/mediciones", (req, res) => this.postMediciones(req, res));
         this.app.get("/mediciones", (req, res) => this.getMediciones(req, res));
         this.app.get("/mediciones/ultima", (req, res) => this.getUltimaMedicion(req, res));
+        if (rutaWeb) {
+            this.#servirInterfazWeb(rutaWeb);
+        }
         this.app.use((error, req, res, next) => this.#responderError(error, res));
     }
 
@@ -130,6 +141,28 @@ class ServidorREST {
             res.status(200).json(ultima);
         } catch (error) {
             this.#responderError(error, res);
+        }
+    }
+
+    /*
+     * --------------------------------------------------------------
+     * Propósito: sirve como ficheros estáticos solo las tres carpetas
+     *            de la interfaz web. El código del servidor, de la
+     *            lógica y de la base de datos nunca se publica.
+     *
+     * Diseño lógico:
+     *     rutaWeb: Text --> servirInterfazWeb() -->
+     *
+     * Parámetros:
+     *     rutaWeb: Text. Carpeta que contiene ux, navegador y
+     *              navegador_fake.
+     * Retorno: ninguno.
+     * Errores: ninguno.
+     * --------------------------------------------------------------
+     */
+    #servirInterfazWeb(rutaWeb) {
+        for (const carpeta of CARPETAS_WEB) {
+            this.app.use(`/${carpeta}`, express.static(path.join(rutaWeb, carpeta)));
         }
     }
 

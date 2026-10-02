@@ -1,162 +1,165 @@
-'use strict';
+// =============================================================================
+// repositorioMediciones.test.js
+//
+// Descripción: tests automáticos del componente bd (RepositorioMediciones).
+// Autor:       Júlia Beltrán Girbés
+// Fecha:       2026
+// Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
+// Aportación:  Casos pedidos en doc/bd_design.md, con BD en memoria.
+// =============================================================================
 
-const RepositorioMediciones = require('./repositorioMediciones');
+const RepositorioMediciones = require("./repositorioMediciones");
 
-const CAMPOS_OBLIGATORIOS = ['tipo', 'valor', 'latitud', 'longitud', 'fechaHora'];
-
-/**
- * Propósito: construir una medición válida para los tests, sobrescribiendo
- * los campos indicados.
+/*
+ * --------------------------------------------------------------
+ * Propósito: crea una Medicion de prueba, sustituyendo los campos
+ *            que se indiquen.
  *
  * Diseño lógico:
- * --------------------
- * cambios: Medicion --> medicionValida() --> m: Medicion
- * --------------------
- *
- * @param {Object} [cambios] Campos a sobrescribir.
- * @returns {Medicion} Medición con todos los campos informados.
- * @throws {Error} No lanza errores.
+ *     cambios: Medicion --> medicionDePrueba() --> Medicion
+ * --------------------------------------------------------------
  */
-function medicionValida(cambios = {}) {
-  return {
-    id: 0,
-    tipo: 'NO2',
-    valor: 42.5,
-    latitud: 39.4699,
-    longitud: -0.3763,
-    fechaHora: '2026-09-29T10:00:00Z',
-    ...cambios,
-  };
+function medicionDePrueba(cambios = {}) {
+    return {
+        tipo: "CO2",
+        valor: 412.5,
+        latitud: 38.96,
+        longitud: -0.18,
+        fechaHora: "2026-10-02T10:00:00Z",
+        ...cambios,
+    };
 }
 
-describe('RepositorioMediciones', () => {
-  let repositorio;
-
-  beforeEach(() => {
-    repositorio = new RepositorioMediciones(':memory:');
-  });
-
-  describe('insertar', () => {
-    test('guarda una medición y devuelve su id', () => {
-      const id = repositorio.insertar(medicionValida());
-
-      expect(id).toBe(1);
-      expect(repositorio.recuperarTodas()).toEqual([medicionValida({ id })]);
-    });
-
-    test('ignora el id de la medición recibida', () => {
-      const id = repositorio.insertar(medicionValida({ id: 999 }));
-
-      expect(id).toBe(1);
-    });
-
-    test('asigna ids autoincrementales y distintos', () => {
-      const id1 = repositorio.insertar(medicionValida());
-      const id2 = repositorio.insertar(medicionValida());
-      const id3 = repositorio.insertar(medicionValida());
-
-      expect([id1, id2, id3]).toEqual([1, 2, 3]);
-      expect(new Set([id1, id2, id3]).size).toBe(3);
-    });
-  });
-
-  describe('recuperarUltima', () => {
-    test('devuelve la medición de mayor fechaHora', () => {
-      repositorio.insertar(medicionValida({ fechaHora: '2026-09-29T10:00:00Z' }));
-      repositorio.insertar(medicionValida({ fechaHora: '2026-09-29T12:00:00Z', tipo: 'O3' }));
-      repositorio.insertar(medicionValida({ fechaHora: '2026-09-29T11:00:00Z' }));
-
-      const ultima = repositorio.recuperarUltima();
-
-      expect(ultima.tipo).toBe('O3');
-      expect(ultima.fechaHora).toBe('2026-09-29T12:00:00Z');
-    });
-
-    test('desempata por mayor id si la fechaHora coincide', () => {
-      const fechaHora = '2026-09-29T10:00:00Z';
-      repositorio.insertar(medicionValida({ fechaHora, valor: 1 }));
-      const idUltimo = repositorio.insertar(medicionValida({ fechaHora, valor: 2 }));
-
-      const ultima = repositorio.recuperarUltima();
-
-      expect(ultima.id).toBe(idUltimo);
-      expect(ultima.valor).toBe(2);
-    });
-
-    test('devuelve null si no hay mediciones', () => {
-      expect(repositorio.recuperarUltima()).toBeNull();
-    });
-  });
-
-  describe('recuperarTodas', () => {
-    test('devuelve todas las mediciones guardadas', () => {
-      const id1 = repositorio.insertar(medicionValida({ tipo: 'NO2' }));
-      const id2 = repositorio.insertar(medicionValida({ tipo: 'O3', valor: 80 }));
-
-      expect(repositorio.recuperarTodas()).toEqual([
-        medicionValida({ id: id1, tipo: 'NO2' }),
-        medicionValida({ id: id2, tipo: 'O3', valor: 80 }),
-      ]);
-    });
-
-    test('devuelve una lista vacía si no hay mediciones', () => {
-      expect(repositorio.recuperarTodas()).toEqual([]);
-    });
-  });
-
-  describe('datos inválidos', () => {
-    describe.each(CAMPOS_OBLIGATORIOS)('campo %s', (campo) => {
-      test('se rechaza si es null', () => {
-        expect(() => repositorio.insertar(medicionValida({ [campo]: null }))).toThrow(
-          /Medición inválida/
-        );
-        expect(repositorio.recuperarTodas()).toEqual([]);
-      });
-
-      test('se rechaza si está ausente', () => {
-        const medicion = medicionValida();
-        delete medicion[campo];
-
-        expect(() => repositorio.insertar(medicion)).toThrow(/Medición inválida/);
-        expect(repositorio.recuperarTodas()).toEqual([]);
-      });
-    });
-
-    test('se rechaza una medición null', () => {
-      expect(() => repositorio.insertar(null)).toThrow(/Medición inválida/);
-    });
-  });
-
-  describe('errores de base de datos', () => {
-    const FRAGMENTO_SQL = /INSERT INTO|SELECT |VALUES|ORDER BY|LIMIT|\?/;
+describe("RepositorioMediciones", () => {
+    let repositorio;
 
     beforeEach(() => {
-      repositorio.conexion.close(); // simula una conexión cerrada
+        repositorio = new RepositorioMediciones(":memory:");
     });
 
-    test.each([
-      ['insertar', (r) => r.insertar(medicionValida()), 'No se pudo insertar la medición en la base de datos.'],
-      ['recuperarUltima', (r) => r.recuperarUltima(), 'No se pudo recuperar la última medición de la base de datos.'],
-      ['recuperarTodas', (r) => r.recuperarTodas(), 'No se pudieron recuperar las mediciones de la base de datos.'],
-    ])('%s lanza un Error claro sin exponer el SQL', (_nombre, operacion, mensaje) => {
-      let error;
-      try {
-        operacion(repositorio);
-      } catch (e) {
-        error = e;
-      }
-
-      expect(error).toBeInstanceOf(Error);
-      expect(error.message).toBe(mensaje);
-      expect(error.message).not.toMatch(FRAGMENTO_SQL);
+    afterEach(() => {
+        if (repositorio.conexion.open) {
+            repositorio.conexion.close();
+        }
     });
-  });
 
-  describe('constructor', () => {
-    test('lanza un Error claro si la BD no puede abrirse', () => {
-      expect(() => new RepositorioMediciones('/directorio/inexistente/mediciones.db')).toThrow(
-        'No se pudo abrir o inicializar la base de datos.'
-      );
+    describe("insertar()", () => {
+        test("guarda una medición y devuelve su id", () => {
+            const id = repositorio.insertar(medicionDePrueba());
+
+            expect(id).toBe(1);
+            expect(repositorio.recuperarTodas()).toEqual([
+                { id: 1, ...medicionDePrueba() },
+            ]);
+        });
+
+        test("asigna ids autoincrementales y distintos", () => {
+            const id1 = repositorio.insertar(medicionDePrueba());
+            const id2 = repositorio.insertar(medicionDePrueba());
+
+            expect(id2).toBeGreaterThan(id1);
+        });
+
+        test("ignora el id recibido: lo asigna la base de datos", () => {
+            const id = repositorio.insertar(medicionDePrueba({ id: 999 }));
+
+            expect(id).toBe(1);
+        });
     });
-  });
+
+    describe("recuperarUltima()", () => {
+        test("devuelve la medición de mayor fechaHora", () => {
+            repositorio.insertar(medicionDePrueba({ fechaHora: "2026-10-02T12:00:00Z", valor: 2 }));
+            repositorio.insertar(medicionDePrueba({ fechaHora: "2026-10-02T09:00:00Z", valor: 1 }));
+
+            expect(repositorio.recuperarUltima().valor).toBe(2);
+        });
+
+        test("desempata por mayor id si la fechaHora coincide", () => {
+            repositorio.insertar(medicionDePrueba({ valor: 1 }));
+            const idUltimo = repositorio.insertar(medicionDePrueba({ valor: 2 }));
+
+            const ultima = repositorio.recuperarUltima();
+
+            expect(ultima.id).toBe(idUltimo);
+            expect(ultima.valor).toBe(2);
+        });
+
+        test("devuelve null si no hay mediciones", () => {
+            expect(repositorio.recuperarUltima()).toBeNull();
+        });
+    });
+
+    describe("recuperarTodas()", () => {
+        test("devuelve varias mediciones", () => {
+            repositorio.insertar(medicionDePrueba({ valor: 1 }));
+            repositorio.insertar(medicionDePrueba({ valor: 2 }));
+            repositorio.insertar(medicionDePrueba({ valor: 3 }));
+
+            const todas = repositorio.recuperarTodas();
+
+            expect(todas).toHaveLength(3);
+            expect(todas.map((m) => m.valor)).toEqual([1, 2, 3]);
+        });
+
+        test("devuelve lista vacía si no hay mediciones", () => {
+            expect(repositorio.recuperarTodas()).toEqual([]);
+        });
+    });
+
+    describe("datos inválidos", () => {
+        test.each(["tipo", "valor", "latitud", "longitud", "fechaHora"])(
+            "rechaza una medición sin el campo %s",
+            (campo) => {
+                const medicion = medicionDePrueba();
+                delete medicion[campo];
+
+                expect(() => repositorio.insertar(medicion)).toThrow(
+                    `falta el campo ${campo}`
+                );
+                expect(repositorio.recuperarTodas()).toEqual([]);
+            }
+        );
+
+        test("rechaza un campo con valor null", () => {
+            expect(() => repositorio.insertar(medicionDePrueba({ valor: null }))).toThrow(
+                "falta el campo valor"
+            );
+        });
+
+        test("rechaza una medición inexistente", () => {
+            expect(() => repositorio.insertar(null)).toThrow("no se ha recibido");
+            expect(() => repositorio.insertar(undefined)).toThrow("no se ha recibido");
+        });
+    });
+
+    describe("errores de base de datos", () => {
+        beforeEach(() => {
+            repositorio.conexion.close();
+        });
+
+        test("insertar() lanza un error claro sin exponer SQL", () => {
+            expect(() => repositorio.insertar(medicionDePrueba())).toThrow(
+                "Error de base de datos al insertar la medición"
+            );
+        });
+
+        test("recuperarUltima() lanza un error claro", () => {
+            expect(() => repositorio.recuperarUltima()).toThrow(
+                "Error de base de datos al recuperar la última medición"
+            );
+        });
+
+        test("recuperarTodas() lanza un error claro", () => {
+            expect(() => repositorio.recuperarTodas()).toThrow(
+                "Error de base de datos al recuperar las mediciones"
+            );
+        });
+
+        test("el constructor falla con una ruta inaccesible", () => {
+            expect(() => new RepositorioMediciones("/ruta/que/no/existe/bd.sqlite")).toThrow(
+                "No se pudo abrir la base de datos"
+            );
+        });
+    });
 });

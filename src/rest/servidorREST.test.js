@@ -6,9 +6,11 @@
 // Fecha:       2026
 // Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
 // Aportación:  Casos pedidos en doc/rest_design.md, con una lógica simulada
-//              (sin base de datos real) y Supertest.
+//              (sin base de datos real) y Supertest. Incluye los ficheros
+//              estáticos de la interfaz web.
 // =============================================================================
 
+const path = require("path");
 const request = require("supertest");
 const ServidorREST = require("./servidorREST");
 
@@ -203,6 +205,71 @@ describe("ServidorREST", () => {
 
             expect(respuesta.status).toBe(500);
             expect(respuesta.body).toEqual({ error: "error interno del servidor" });
+        });
+    });
+
+    describe("ficheros estáticos de la interfaz web", () => {
+        const rutaWeb = path.join(__dirname, "..");
+        let appConWeb;
+
+        beforeEach(() => {
+            appConWeb = new ServidorREST(logica, rutaWeb).app;
+        });
+
+        test("con rutaWeb, GET /ux/ devuelve la página index.html", async () => {
+            const respuesta = await request(appConWeb).get("/ux/");
+
+            expect(respuesta.status).toBe(200);
+            expect(respuesta.headers["content-type"]).toContain("text/html");
+            expect(respuesta.text).toContain("Calidad del aire");
+        });
+
+        test("con rutaWeb, se sirven los ficheros de la interfaz y de la lógica del navegador", async () => {
+            for (const ruta of [
+                "/ux/controladorUX.js",
+                "/ux/estilos.css",
+                "/navegador/logicaNavegador.js",
+                "/navegador_fake/logicaNavegadorFake.js",
+            ]) {
+                const respuesta = await request(appConWeb).get(ruta);
+
+                expect(respuesta.status).toBe(200);
+            }
+        });
+
+        test.each([
+            "/bd/repositorioMediciones.js",
+            "/logica/logicaMediciones.js",
+            "/rest/servidorREST.js",
+            "/rest/index.js",
+        ])("con rutaWeb, NO se sirve el código del servidor: %s", async (ruta) => {
+            const respuesta = await request(appConWeb).get(ruta);
+
+            expect(respuesta.status).toBe(404);
+            expect(respuesta.text).not.toContain("require(");
+        });
+
+        test("con rutaWeb, no se puede salir de las carpetas servidas", async () => {
+            const respuesta = await request(appConWeb).get("/ux/%2e%2e/bd/repositorioMediciones.js");
+
+            expect(respuesta.status).not.toBe(200);
+            expect(respuesta.text).not.toContain("better-sqlite3");
+        });
+
+        test("sin rutaWeb, GET /ux/ devuelve 404", async () => {
+            const respuesta = await request(app).get("/ux/");
+
+            expect(respuesta.status).toBe(404);
+        });
+
+        test("servir la web no altera las rutas de la API", async () => {
+            logica.recuperarUltimaMedicion.mockReturnValue({ id: 1, ...medicionDePrueba() });
+
+            const ultima = await request(appConWeb).get("/mediciones/ultima");
+            const guardar = await request(appConWeb).post("/mediciones").send(medicionDePrueba());
+
+            expect(ultima.status).toBe(200);
+            expect(guardar.status).toBe(201);
         });
     });
 });

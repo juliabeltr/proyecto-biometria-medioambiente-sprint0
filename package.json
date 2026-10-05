@@ -4,8 +4,8 @@
   "description": "Sprint 0: prototipo de crowdsensing de mediciones ambientales",
   "private": true,
   "scripts": {
-    "test": "jest"
-    "servidor": "node src/rest/servidorREST.js" 
+    "test": "jest",
+    "servidor": "node src/rest/index.js"
   },
   "dependencies": {
     "better-sqlite3": "^11.0.0",

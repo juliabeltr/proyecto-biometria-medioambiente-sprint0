@@ -147,10 +147,11 @@ Flujo: `Medidor` → `Publicador` → `EmisoraBLE` → anuncio BLE → teléfono
  --------- ServicioEnEmisora --------------------
  |
  |  uuidServicio: [N]_16
+ |  elServicio: BLEService
  |  lasCaracteristicas: [Caracteristica]
  |
  |
- nombre_servicio: Text --> ServicioEnEmisora() -->
+ ServicioEnEmisora() -->
  |
  |
  escribeUUID() -->

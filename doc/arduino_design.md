@@ -82,7 +82,7 @@ Flujo: `Medidor` → `Publicador` → `EmisoraBLE` → anuncio BLE → teléfono
  N <-- medirCO2() -->
  |
  |
- Z <-- medirTemperatura() -->
+ N <-- medirTemperatura() -->
  |
  ------------------------------------------------
 ```

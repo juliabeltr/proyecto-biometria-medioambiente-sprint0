@@ -188,6 +188,132 @@ Pantalla única de la app:
 - Texto de estado: "Detenido", "Escuchando...", "Faltan permisos de Bluetooth".
 - Texto con la última medición enviada (por ejemplo "CO2 = 235 enviada") o el último error de envío.
 
+### Clases reutilizadas del código proporcionado
+
+UUID = ( masSignificativos: Z, menosSignificativos: Z )
+
+```text
+ --------- TramaIBeacon -------------------------
+ |
+ |  prefijo: [Z]_9
+ |  uuid: [Z]_16
+ |  major: [Z]_2
+ |  minor: [Z]_2
+ |  txPower: Z
+ |  losBytes: [Z]
+ |  advFlags: [Z]_3
+ |  advHeader: [Z]_2
+ |  companyID: [Z]_2
+ |  iBeaconType: Z
+ |  iBeaconLength: Z
+ |
+ |
+ bytes: [Z] --> TramaIBeacon() -->
+ |
+ |
+ [Z]_9 <-- getPrefijo() <--
+ |
+ |
+ [Z]_16 <-- getUUID() <--
+ |
+ |
+ [Z]_2 <-- getMajor() <--
+ |
+ |
+ [Z]_2 <-- getMinor() <--
+ |
+ |
+ Z <-- getTxPower() <--
+ |
+ |
+ [Z] <-- getLosBytes() <--
+ |
+ |
+ [Z]_3 <-- getAdvFlags() <--
+ |
+ |
+ [Z]_2 <-- getAdvHeader() <--
+ |
+ |
+ [Z]_2 <-- getCompanyID() <--
+ |
+ |
+ Z <-- getiBeaconType() <--
+ |
+ |
+ Z <-- getiBeaconLength() <--
+ |
+ ------------------------------------------------
+
+ --------- Utilidades ---------------------------
+ |
+ |
+ texto: Text --> stringToBytes() --x
+   [Z] <--
+ |
+ |
+ uuid: Text --> stringToUUID() --x
+   UUID <--
+ |
+ |
+ uuid: UUID --> uuidToString() --x
+   Text <--
+ |
+ |
+ uuid: UUID --> uuidToHexString() --x
+   Text <--
+ |
+ |
+ bytes: [Z] --> bytesToString() --x
+   Text <--
+ |
+ |
+ mas_significativos: Z, menos_significativos: Z --> dosLongToBytes() --x
+   [Z]_16 <--
+ |
+ |
+ bytes: [Z] --> bytesToInt() --x
+   Z <--
+ |
+ |
+ bytes: [Z] --> bytesToLong() --x
+   Z <--
+ |
+ |
+ bytes: [Z] --> bytesToIntOK() --x
+   Z <--
+ |
+ |
+ bytes: [Z] --> bytesToHexString() --x
+   Text <--
+ |
+ ------------------------------------------------
+
+ --------- PeticionarioREST ---------------------
+ |
+ |  metodo: Text
+ |  urlDestino: Text
+ |  cuerpoPeticion: Text
+ |  codigoRespuesta: Z
+ |  cuerpoRespuesta: Text
+ |
+ |
+ PeticionarioREST() -->
+ |
+ |
+ metodo: Text, url_destino: Text, cuerpo: Text --> hacerPeticionREST() -->
+   codigo: Z, cuerpo: Text <--
+ |
+ ------------------------------------------------
+
+ --------- RespuestaREST (interfaz) -------------
+ |
+ |
+ codigo: Z, cuerpo: Text --> callback() -->
+ |
+ ------------------------------------------------
+```
+
 ## 2. Aclaraciones del diseño
 
 - La placa emite iBeacons con esta estructura: el UUID es el texto `EPSG-GTI-PROY-3A`, el `major` contiene en su byte alto el tipo de medición (11 = CO2, 12 = TEMP, 13 = RUIDO) y en el bajo un contador, y el `minor` contiene el valor medido como entero de 16 bits con signo.
@@ -210,8 +336,12 @@ Pantalla única de la app:
 - `Medicion.aJSON()` produce un objeto JSON con los campos `tipo`, `valor`, `latitud`, `longitud` y `fechaHora` (sin `id`). Los números usan punto decimal.
 - `EscanerBeacons` escanea sin filtros en modo de baja latencia, y entrega los bytes de cada anuncio a su `EscuchadorBeacons`. No interpreta los datos.
 - `MainActivity` solo coordina: pide permisos, arranca y detiene el escaneo, crea `LogicaTelefonoREST` con la dirección escrita en pantalla, y muestra el estado. No contiene lógica de conversión ni de comunicación.
-- Permisos: en Android 12 o posterior se piden `BLUETOOTH_SCAN` y `BLUETOOTH_CONNECT`; en versiones anteriores, `ACCESS_FINE_LOCATION`. Sin permisos no se inicia el escaneo.
-- `TramaIBeacon`, `Utilidades` y `PeticionarioREST` ya existen y se reutilizan: sus diseños están en los planos de ingeniería inversa.
+- Para mostrar si cada medición se ha enviado, `MainActivity` envuelve la lógica en un `LogicaTelefono` que delega en la lógica real y avisa a la pantalla con el resultado. No cambia el comportamiento del envío.
+- Permisos: en Android 12 o posterior se piden `BLUETOOTH_SCAN`, `BLUETOOTH_CONNECT` y `ACCESS_FINE_LOCATION`; en versiones anteriores, `ACCESS_FINE_LOCATION`. No se declara `neverForLocation` para no arriesgar que Android oculte los iBeacon. Sin permisos no se inicia el escaneo.
+- `TramaIBeacon`, `Utilidades` y `PeticionarioREST` proceden del código proporcionado y se reutilizan; su diseño está en la sección "Clases reutilizadas del código proporcionado".
+- `TramaIBeacon` interpreta una trama de al menos 30 bytes: prefijo de 9 bytes (flags, cabecera, fabricante, tipo y longitud de iBeacon), UUID de 16 bytes, major de 2, minor de 2 y txPower de 1. Si la trama es nula o más corta, el constructor termina con error.
+- `Utilidades.bytesToInt()` interpreta los bytes como entero con signo, de modo que `0xFFF4` es -12. `stringToUUID()` exige un texto de exactamente 16 caracteres.
+- `PeticionarioREST.hacerPeticionREST()` envía una petición HTTP en segundo plano y avisa del código y el cuerpo de la respuesta mediante `RespuestaREST`. Si hay un fallo de red, el código es 0. En el diseño lógico se omiten los métodos propios de `AsyncTask` (`doInBackground`, `onPostExecute`).
 - En el diseño lógico se omiten los callbacks y la mecánica propia de Android (`onCreate`, `onRequestPermissionsResult`, `AsyncTask`). La operación `enviarMedicion()` es asíncrona: avisa del resultado mediante un `ResultadoEnvio` con `callback(resultado: B)`.
 - No se añaden clases ni operaciones que no aparezcan en este diseño.
 
@@ -227,5 +357,6 @@ Pantalla única de la app:
   - `ProcesadorBeacons` con `LogicaTelefonoFake`: trama válida enviada, trama repetida enviada una sola vez, trama nula o de menos de 30 bytes ignorada, UUID ajeno ignorado, fallo del envío;
   - `LogicaTelefonoFake`: guarda mediciones, y con `falla` no guarda y devuelve `false`;
   - `Medicion.aJSON()`: los cinco campos, punto decimal y valores negativos.
+- Los tests usan una clase de apoyo, `TramasDePrueba`, que construye tramas iBeacon como las emite la placa.
 - `LogicaTelefonoREST`, `EscanerBeacons` y `MainActivity` usan la API de Android y no se prueban con JUnit: se comprueban en la prueba completa del sistema.
 - El código no añade funcionalidades que no estén incluidas en el diseño.

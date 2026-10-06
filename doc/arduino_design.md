@@ -173,11 +173,11 @@ Flujo: `Medidor` → `Publicador` → `EmisoraBLE` → anuncio BLE → teléfono
  nombre_caracteristica: Text --> Caracteristica() -->
  |
  |
- nombre_caracteristica: Text, props: N, permiso_lectura: Text,
- permiso_escritura: Text, tam: N --> Caracteristica() -->
+ nombre_caracteristica: Text, props: N, permisoRead: Text,
+ permisoWrite: Text, tam: Z --> Caracteristica() -->
  |
  |
- props: N, permiso_lectura: Text, permiso_escritura: Text, tam: N
+ props: N, permisoRead: Text, permisoWrite: Text, tam: Z
      --> asignarPropiedadesPermisosYTamanyoDatos() -->
  |
  |

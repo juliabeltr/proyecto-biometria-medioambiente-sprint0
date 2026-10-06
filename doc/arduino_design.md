@@ -167,6 +167,7 @@ Flujo: `Medidor` → `Publicador` → `EmisoraBLE` → anuncio BLE → teléfono
  --------- Caracteristica -----------------------
  |
  |  uuidCaracteristica: [N]_16
+ |  laCaracteristica: BLECharacteristic
  |
  |
  nombre_caracteristica: Text --> Caracteristica() -->

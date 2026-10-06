@@ -173,11 +173,11 @@ Flujo: `Medidor` → `Publicador` → `EmisoraBLE` → anuncio BLE → teléfono
  nombre_caracteristica: Text --> Caracteristica() -->
  |
  |
- nombre_caracteristica: Text, props: N, permisoRead: Text,
+ nombre_caracteristica: Text, props: Z, permisoRead: Text,
  permisoWrite: Text, tam: Z --> Caracteristica() -->
  |
  |
- props: N, permisoRead: Text, permisoWrite: Text, tam: Z
+ props: Z, permisoRead: Text, permisoWrite: Text, tam: Z
      --> asignarPropiedadesPermisosYTamanyoDatos() -->
  |
  |
@@ -195,13 +195,13 @@ Flujo: `Medidor` → `Publicador` → `EmisoraBLE` → anuncio BLE → teléfono
  activar() -->
  |
  |
- props: N --> asignarPropiedades() -->
+ props: Z --> asignarPropiedades() -->
  |
  |
- permiso_lectura: Text, permiso_escritura: Text --> asignarPermisos() -->
+ permisoRead: Text, permisoWrite: Text --> asignarPermisos() -->
  |
  |
- tam: N --> asignarTamanyoDatos() -->
+ tam: Z --> asignarTamanyoDatos() -->
  |
  ------------------------------------------------
 ```

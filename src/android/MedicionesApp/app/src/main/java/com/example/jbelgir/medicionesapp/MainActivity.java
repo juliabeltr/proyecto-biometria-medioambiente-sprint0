@@ -231,8 +231,8 @@ public class MainActivity extends AppCompatActivity {
     private LogicaTelefono logicaConAviso(final LogicaTelefono real) {
         return new LogicaTelefono() {
             @Override
-            public void enviarMedicion(final Medicion m, final ResultadoEnvio resultadoEnvio) {
-                real.enviarMedicion(m, resultado -> {
+            public void guardarMedicion(final Medicion m, final ResultadoEnvio resultadoEnvio) {
+                real.guardarMedicion(m, resultado -> {
                     String texto = m.getTipo() + " = " + formatearValor(m.getValor())
                             + (resultado ? " enviada" : " NO enviada (error de red o del servidor)");
                     textoUltimaMedicion.setText(texto);

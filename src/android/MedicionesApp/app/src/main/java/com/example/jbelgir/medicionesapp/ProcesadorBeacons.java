@@ -72,7 +72,7 @@ public class ProcesadorBeacons {
         if (!filtro.esNueva(Utilidades.bytesToInt(trama.getMajor()))) {
             return false;
         }
-        logica.enviarMedicion(medicion, new LogicaTelefono.ResultadoEnvio() {
+        logica.guardarMedicion(medicion, new LogicaTelefono.ResultadoEnvio() {
             @Override
             public void callback(boolean resultado) {
                 // El resultado lo muestra quien envuelve la lógica (MainActivity).

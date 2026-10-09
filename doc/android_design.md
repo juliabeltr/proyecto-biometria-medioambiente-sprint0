@@ -13,171 +13,168 @@ Flujo: `EscanerBeacons` → `MainActivity` → `ProcesadorBeacons` → `LogicaTe
 ### Medicion
 
 ```text
- --------- Medicion -----------------------------
- |
- |  id: N
- |  tipo: Text
- |  valor: R
- |  latitud: R
- |  longitud: R
- |  fechaHora: Text
- |
- |
- id: N, tipo: Text, valor: R, latitud: R, longitud: R, fechaHora: Text
-     --> Medicion() -->
- |
- |
- texto: Text <-- aJSON() <--
- |
- ------------------------------------------------
+                                                                           --------- Medicion -----------------------------
+                                                                           |
+                                                                           |  id: N
+                                                                           |  tipo: Text
+                                                                           |  valor: R
+                                                                           |  latitud: R
+                                                                           |  longitud: R
+                                                                           |  fechaHora: Text
+                                                                           |
+                                                                           |
+ id: N, tipo: Text, valor: R, latitud: R, longitud: R, fechaHora: Text --> Medicion() -->
+                                                                           |
+                                                                           |
+                                                           texto: Text <-- aJSON() <--
+                                                                           |
+                                                                           ------------------------------------------------
 ```
 
 ### ConversorBeacon
 
 ```text
- --------- ConversorBeacon ----------------------
- |
- |  UUID_PROYECTO: Text
- |
- |
- trama: TramaIBeacon, fechaHora: Text, latitud: R, longitud: R
-     --> convertir() --x
-     medicion: Medicion <--
- |
- ------------------------------------------------
+                                                                   --------- ConversorBeacon ----------------------
+                                                                   |
+                                                                   |  UUID_PROYECTO: Text
+                                                                   |
+                                                                   |
+ trama: TramaIBeacon, fechaHora: Text, latitud: R, longitud: R --> convertir() --x
+                                            medicion: Medicion <--
+                                                                   |
+                                                                   ------------------------------------------------
 ```
 
 ### FiltroDuplicados
 
 ```text
- --------- FiltroDuplicados ---------------------
- |
- |  ultimoMajorPorTipo: [(tipo: N, major: N)]
- |
- |
- FiltroDuplicados() -->
- |
- |
- major: N --> esNueva() -->
-   resultado: B <--
- |
- ------------------------------------------------
+                  --------- FiltroDuplicados ---------------------
+                  |
+                  |  ultimoMajorPorTipo: [(tipo: N, major: N)]
+                  |
+                  |
+                  FiltroDuplicados() -->
+                  |
+                  |
+     major: N --> esNueva() -->
+ resultado: B <--
+                  |
+                  ------------------------------------------------
 ```
 
 ### LogicaTelefono (interfaz), LogicaTelefonoREST y LogicaTelefonoFake
 
 ```text
- --------- LogicaTelefono (interfaz) ------------
- |
- |
- m: Medicion --> enviarMedicion() -->
-   resultado: B <--
- |
- ------------------------------------------------
+                  --------- LogicaTelefono (interfaz) ------------
+                  |
+                  |
+  m: Medicion --> guardarMedicion() -->
+ resultado: B <--
+                  |
+                  ------------------------------------------------
 
- --------- LogicaTelefonoREST -------------------
- |
- |  urlBase: Text
- |
- |
+                   --------- LogicaTelefonoREST -------------------
+                   |
+                   |  urlBase: Text
+                   |
+                   |
  urlBase: Text --> LogicaTelefonoREST() -->
- |
- |
- m: Medicion --> enviarMedicion() -->
-   resultado: B <--
- |
- ------------------------------------------------
+                   |
+                   |
+   m: Medicion --> guardarMedicion() -->
+  resultado: B <--
+                   |
+                   ------------------------------------------------
 
- --------- LogicaTelefonoFake -------------------
- |
- |  enviadas: [Medicion]
- |  falla: B
- |
- |
- falla: B --> LogicaTelefonoFake() -->
- |
- |
- m: Medicion --> enviarMedicion() -->
-   resultado: B <--
- |
- |
- [Medicion] <-- getEnviadas() <--
- |
- ------------------------------------------------
+                  --------- LogicaTelefonoFake -------------------
+                  |
+                  |  enviadas: [Medicion]
+                  |  falla: B
+                  |
+                  |
+     falla: B --> LogicaTelefonoFake() -->
+                  |
+                  |
+  m: Medicion --> guardarMedicion() -->
+ resultado: B <--
+                  |
+                  |
+   [Medicion] <-- getEnviadas() <--
+                  |
+                  ------------------------------------------------
 ```
 
 ### ProcesadorBeacons
 
 ```text
- --------- ProcesadorBeacons --------------------
- |
- |  logica: LogicaTelefono
- |  filtro: FiltroDuplicados
- |  latitud: R
- |  longitud: R
- |
- |
- logica: LogicaTelefono, latitud: R, longitud: R
-     --> ProcesadorBeacons() -->
- |
- |
- bytes: [Z], fechaHora: Text --> procesar() -->
-   resultado: B <--
- |
- ------------------------------------------------
+                                                     --------- ProcesadorBeacons --------------------
+                                                     |
+                                                     |  logica: LogicaTelefono
+                                                     |  filtro: FiltroDuplicados
+                                                     |  latitud: R
+                                                     |  longitud: R
+                                                     |
+                                                     |
+ logica: LogicaTelefono, latitud: R, longitud: R --> ProcesadorBeacons() -->
+                                                     |
+                                                     |
+                     bytes: [Z], fechaHora: Text --> procesar() -->
+                                    resultado: B <--
+                                                     |
+                                                     ------------------------------------------------
 ```
 
 ### EscanerBeacons
 
 ```text
- --------- EscanerBeacons -----------------------
- |
- |  escuchador: EscuchadorBeacons
- |  escaneando: B
- |
- |
+                                   --------- EscanerBeacons -----------------------
+                                   |
+                                   |  escuchador: EscuchadorBeacons
+                                   |  escaneando: B
+                                   |
+                                   |
  escuchador: EscuchadorBeacons --> EscanerBeacons() -->
- |
- |
- iniciarEscaneo() -->
- |
- |
- detenerEscaneo() -->
- |
- |
- resultado: B <-- estaEscaneando() <--
- |
- ------------------------------------------------
+                                   |
+                                   |
+                                   iniciarEscaneo() -->
+                                   |
+                                   |
+                                   detenerEscaneo() -->
+                                   |
+                                   |
+                  resultado: B <-- estaEscaneando() <--
+                                   |
+                                   ------------------------------------------------
 
- --------- EscuchadorBeacons (interfaz) ---------
- |
- |
+                --------- EscuchadorBeacons (interfaz) ---------
+                |
+                |
  bytes: [Z] --> alRecibirAnuncio() -->
- |
- ------------------------------------------------
+                |
+                ------------------------------------------------
 ```
 
 ### MainActivity
 
 ```text
- --------- MainActivity -------------------------
- |
- |  procesador: ProcesadorBeacons
- |  escaner: EscanerBeacons
- |
- |
- iniciarEscucha() -->
- |
- |
- detenerEscucha() -->
- |
- |
+                  --------- MainActivity -------------------------
+                  |
+                  |  procesador: ProcesadorBeacons
+                  |  escaner: EscanerBeacons
+                  |
+                  |
+                  iniciarEscucha() -->
+                  |
+                  |
+                  detenerEscucha() -->
+                  |
+                  |
  resultado: B <-- tienePermisos() <--
- |
- |
- pedirPermisos() -->
- |
- ------------------------------------------------
+                  |
+                  |
+                  pedirPermisos() -->
+                  |
+                  ------------------------------------------------
 ```
 
 Pantalla única de la app:
@@ -193,125 +190,125 @@ Pantalla única de la app:
 UUID = ( masSignificativos: Z, menosSignificativos: Z )
 
 ```text
- --------- TramaIBeacon -------------------------
- |
- |  prefijo: [Z]_9
- |  uuid: [Z]_16
- |  major: [Z]_2
- |  minor: [Z]_2
- |  txPower: Z
- |  losBytes: [Z]
- |  advFlags: [Z]_3
- |  advHeader: [Z]_2
- |  companyID: [Z]_2
- |  iBeaconType: Z
- |  iBeaconLength: Z
- |
- |
+                --------- TramaIBeacon -------------------------
+                |
+                |  prefijo: [Z]_9
+                |  uuid: [Z]_16
+                |  major: [Z]_2
+                |  minor: [Z]_2
+                |  txPower: Z
+                |  losBytes: [Z]
+                |  advFlags: [Z]_3
+                |  advHeader: [Z]_2
+                |  companyID: [Z]_2
+                |  iBeaconType: Z
+                |  iBeaconLength: Z
+                |
+                |
  bytes: [Z] --> TramaIBeacon() -->
- |
- |
- [Z]_9 <-- getPrefijo() <--
- |
- |
- [Z]_16 <-- getUUID() <--
- |
- |
- [Z]_2 <-- getMajor() <--
- |
- |
- [Z]_2 <-- getMinor() <--
- |
- |
- Z <-- getTxPower() <--
- |
- |
- [Z] <-- getLosBytes() <--
- |
- |
- [Z]_3 <-- getAdvFlags() <--
- |
- |
- [Z]_2 <-- getAdvHeader() <--
- |
- |
- [Z]_2 <-- getCompanyID() <--
- |
- |
- Z <-- getiBeaconType() <--
- |
- |
- Z <-- getiBeaconLength() <--
- |
- ------------------------------------------------
+                |
+                |
+      [Z]_9 <-- getPrefijo() <--
+                |
+                |
+     [Z]_16 <-- getUUID() <--
+                |
+                |
+      [Z]_2 <-- getMajor() <--
+                |
+                |
+      [Z]_2 <-- getMinor() <--
+                |
+                |
+          Z <-- getTxPower() <--
+                |
+                |
+        [Z] <-- getLosBytes() <--
+                |
+                |
+      [Z]_3 <-- getAdvFlags() <--
+                |
+                |
+      [Z]_2 <-- getAdvHeader() <--
+                |
+                |
+      [Z]_2 <-- getCompanyID() <--
+                |
+                |
+          Z <-- getiBeaconType() <--
+                |
+                |
+          Z <-- getiBeaconLength() <--
+                |
+                ------------------------------------------------
 
- --------- Utilidades ---------------------------
- |
- |
- texto: Text --> stringToBytes() --x
-   [Z] <--
- |
- |
- uuid: Text --> stringToUUID() --x
-   UUID <--
- |
- |
- uuid: UUID --> uuidToString() --x
-   Text <--
- |
- |
- uuid: UUID --> uuidToHexString() --x
-   Text <--
- |
- |
- bytes: [Z] --> bytesToString() --x
-   Text <--
- |
- |
+                                                    --------- Utilidades ---------------------------
+                                                    |
+                                                    |
+                                    texto: Text --> stringToBytes() --x
+                                            [Z] <--
+                                                    |
+                                                    |
+                                     uuid: Text --> stringToUUID() --x
+                                           UUID <--
+                                                    |
+                                                    |
+                                     uuid: UUID --> uuidToString() --x
+                                           Text <--
+                                                    |
+                                                    |
+                                     uuid: UUID --> uuidToHexString() --x
+                                           Text <--
+                                                    |
+                                                    |
+                                     bytes: [Z] --> bytesToString() --x
+                                           Text <--
+                                                    |
+                                                    |
  mas_significativos: Z, menos_significativos: Z --> dosLongToBytes() --x
-   [Z]_16 <--
- |
- |
- bytes: [Z] --> bytesToInt() --x
-   Z <--
- |
- |
- bytes: [Z] --> bytesToLong() --x
-   Z <--
- |
- |
- bytes: [Z] --> bytesToIntOK() --x
-   Z <--
- |
- |
- bytes: [Z] --> bytesToHexString() --x
-   Text <--
- |
- ------------------------------------------------
+                                         [Z]_16 <--
+                                                    |
+                                                    |
+                                     bytes: [Z] --> bytesToInt() --x
+                                              Z <--
+                                                    |
+                                                    |
+                                     bytes: [Z] --> bytesToLong() --x
+                                              Z <--
+                                                    |
+                                                    |
+                                     bytes: [Z] --> bytesToIntOK() --x
+                                              Z <--
+                                                    |
+                                                    |
+                                     bytes: [Z] --> bytesToHexString() --x
+                                           Text <--
+                                                    |
+                                                    ------------------------------------------------
 
- --------- PeticionarioREST ---------------------
- |
- |  metodo: Text
- |  urlDestino: Text
- |  cuerpoPeticion: Text
- |  codigoRespuesta: Z
- |  cuerpoRespuesta: Text
- |
- |
- PeticionarioREST() -->
- |
- |
+                                                   --------- PeticionarioREST ---------------------
+                                                   |
+                                                   |  metodo: Text
+                                                   |  urlDestino: Text
+                                                   |  cuerpoPeticion: Text
+                                                   |  codigoRespuesta: Z
+                                                   |  cuerpoRespuesta: Text
+                                                   |
+                                                   |
+                                                   PeticionarioREST() -->
+                                                   |
+                                                   |
  metodo: Text, url_destino: Text, cuerpo: Text --> hacerPeticionREST() -->
-   codigo: Z, cuerpo: Text <--
- |
- ------------------------------------------------
+                       codigo: Z, cuerpo: Text <--
+                                                   |
+                                                   ------------------------------------------------
 
- --------- RespuestaREST (interfaz) -------------
- |
- |
+                             --------- RespuestaREST (interfaz) -------------
+                             |
+                             |
  codigo: Z, cuerpo: Text --> callback() -->
- |
- ------------------------------------------------
+                             |
+                             ------------------------------------------------
 ```
 
 ## 2. Aclaraciones del diseño
@@ -327,7 +324,7 @@ UUID = ( masSignificativos: Z, menosSignificativos: Z )
   1. ignora la trama si es nula o tiene menos de 30 bytes;
   2. construye la `TramaIBeacon` y la convierte con `ConversorBeacon`; si no es una medición nuestra, la ignora;
   3. consulta el `FiltroDuplicados`; si no es nueva, la ignora;
-  4. envía la `Medicion` con `LogicaTelefono.enviarMedicion()`.
+  4. envía la `Medicion` con `LogicaTelefono.guardarMedicion()`.
   Devuelve `true` si ha enviado la medición y `false` si la ha ignorado.
 - La fecha y hora la decide quien llama a `procesar()` (la app usa el reloj del teléfono en UTC, en formato ISO 8601, por ejemplo `2026-10-03T10:00:00Z`). Así el procesador es determinista y se puede probar.
 - Ubicación del Sprint 0: la latitud y la longitud son valores fijos definidos en `MainActivity`. Obtener la ubicación real con GPS queda para un sprint posterior.
@@ -342,7 +339,7 @@ UUID = ( masSignificativos: Z, menosSignificativos: Z )
 - `TramaIBeacon` interpreta una trama de al menos 30 bytes: prefijo de 9 bytes (flags, cabecera, fabricante, tipo y longitud de iBeacon), UUID de 16 bytes, major de 2, minor de 2 y txPower de 1. Si la trama es nula o más corta, el constructor termina con error.
 - `Utilidades.bytesToInt()` interpreta los bytes como entero con signo, de modo que `0xFFF4` es -12. `stringToUUID()` exige un texto de exactamente 16 caracteres.
 - `PeticionarioREST.hacerPeticionREST()` envía una petición HTTP en segundo plano y avisa del código y el cuerpo de la respuesta mediante `RespuestaREST`. Si hay un fallo de red, el código es 0. En el diseño lógico se omiten los métodos propios de `AsyncTask` (`doInBackground`, `onPostExecute`).
-- En el diseño lógico se omiten los callbacks y la mecánica propia de Android (`onCreate`, `onRequestPermissionsResult`, `AsyncTask`). La operación `enviarMedicion()` es asíncrona: avisa del resultado mediante un `ResultadoEnvio` con `callback(resultado: B)`.
+- En el diseño lógico se omiten los callbacks y la mecánica propia de Android (`onCreate`, `onRequestPermissionsResult`, `AsyncTask`). La operación `guardarMedicion()` es asíncrona: avisa del resultado mediante un `ResultadoEnvio` con `callback(resultado: B)`.
 - No se añaden clases ni operaciones que no aparezcan en este diseño.
 
 ## 3. Reglas generales

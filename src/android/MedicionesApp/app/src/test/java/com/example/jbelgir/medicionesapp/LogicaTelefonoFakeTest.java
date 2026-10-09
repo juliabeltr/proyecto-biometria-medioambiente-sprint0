@@ -38,8 +38,8 @@ public class LogicaTelefonoFakeTest {
     public void guardaLasMedicionesEnOrden() {
         LogicaTelefonoFake logica = new LogicaTelefonoFake(false);
 
-        logica.enviarMedicion(medicion(1), new Resultado());
-        logica.enviarMedicion(medicion(2), new Resultado());
+        logica.guardarMedicion(medicion(1), new Resultado());
+        logica.guardarMedicion(medicion(2), new Resultado());
 
         assertEquals(2, logica.getEnviadas().size());
         assertEquals(1.0, logica.getEnviadas().get(0).getValor(), 0.0);
@@ -50,7 +50,7 @@ public class LogicaTelefonoFakeTest {
     public void avisaConTrueSiSeGuarda() {
         Resultado resultado = new Resultado();
 
-        new LogicaTelefonoFake(false).enviarMedicion(medicion(1), resultado);
+        new LogicaTelefonoFake(false).guardarMedicion(medicion(1), resultado);
 
         assertTrue(resultado.recibido);
     }
@@ -60,7 +60,7 @@ public class LogicaTelefonoFakeTest {
         LogicaTelefonoFake logica = new LogicaTelefonoFake(true);
         Resultado resultado = new Resultado();
 
-        logica.enviarMedicion(medicion(1), resultado);
+        logica.guardarMedicion(medicion(1), resultado);
 
         assertFalse(resultado.recibido);
         assertEquals(0, logica.getEnviadas().size());
@@ -74,7 +74,7 @@ public class LogicaTelefonoFakeTest {
     @Test
     public void modificarLaListaDevueltaNoAlteraLaLogica() {
         LogicaTelefonoFake logica = new LogicaTelefonoFake(false);
-        logica.enviarMedicion(medicion(1), new Resultado());
+        logica.guardarMedicion(medicion(1), new Resultado());
 
         logica.getEnviadas().clear();
 

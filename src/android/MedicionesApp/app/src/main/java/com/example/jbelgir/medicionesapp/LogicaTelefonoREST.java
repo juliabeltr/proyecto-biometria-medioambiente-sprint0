@@ -41,7 +41,7 @@ public class LogicaTelefonoREST implements LogicaTelefono {
      *            resultado es true si el servidor responde 201.
      *
      * Diseño lógico:
-     *     m: Medicion --> enviarMedicion() -->
+     *     m: Medicion --> guardarMedicion() -->
      *       resultado: B <--
      *
      * Parámetros:
@@ -53,7 +53,7 @@ public class LogicaTelefonoREST implements LogicaTelefono {
      * --------------------------------------------------------------
      */
     @Override
-    public void enviarMedicion(Medicion m, final ResultadoEnvio resultadoEnvio) {
+    public void guardarMedicion(Medicion m, final ResultadoEnvio resultadoEnvio) {
         PeticionarioREST peticionario = new PeticionarioREST();
         peticionario.hacerPeticionREST(
                 "POST",

@@ -27,7 +27,7 @@ public class LogicaTelefonoFake implements LogicaTelefono {
      *     falla: B --> LogicaTelefonoFake() -->
      *
      * Parámetros:
-     *     falla: B. Si es true, enviarMedicion() no guarda y devuelve false.
+     *     falla: B. Si es true, guardarMedicion() no guarda y devuelve false.
      * Retorno: ninguno.
      * Errores: ninguno.
      * --------------------------------------------------------------
@@ -42,7 +42,7 @@ public class LogicaTelefonoFake implements LogicaTelefono {
      *            de inmediato (sin red).
      *
      * Diseño lógico:
-     *     m: Medicion --> enviarMedicion() -->
+     *     m: Medicion --> guardarMedicion() -->
      *       resultado: B <--
      *
      * Parámetros:
@@ -53,7 +53,7 @@ public class LogicaTelefonoFake implements LogicaTelefono {
      * --------------------------------------------------------------
      */
     @Override
-    public void enviarMedicion(Medicion m, ResultadoEnvio resultadoEnvio) {
+    public void guardarMedicion(Medicion m, ResultadoEnvio resultadoEnvio) {
         if (falla) {
             resultadoEnvio.callback(false);
             return;

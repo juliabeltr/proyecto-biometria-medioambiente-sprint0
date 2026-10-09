@@ -33,7 +33,7 @@ public interface LogicaTelefono {
      *            asíncrona: el resultado llega por ResultadoEnvio.
      *
      * Diseño lógico:
-     *     m: Medicion --> enviarMedicion() -->
+     *     m: Medicion --> guardarMedicion() -->
      *       resultado: B <--
      *
      * Parámetros:
@@ -43,5 +43,5 @@ public interface LogicaTelefono {
      * Errores: ninguno hacia fuera: un fallo se notifica con false.
      * --------------------------------------------------------------
      */
-    void enviarMedicion(Medicion m, ResultadoEnvio resultadoEnvio);
+    void guardarMedicion(Medicion m, ResultadoEnvio resultadoEnvio);
 }

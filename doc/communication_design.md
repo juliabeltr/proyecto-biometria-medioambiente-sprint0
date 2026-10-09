@@ -5,25 +5,25 @@
 Medicion = ( id: N, tipo: Text, valor: R, latitud: R, longitud: R, fechaHora: Text )
 
 ```text
- --------- ServidorREST -------------------------
- |
- |  logica: LogicaMediciones
- |  rutaWeb: Text
- |
- |
+                                             --------- ServidorREST -------------------------
+                                             |
+                                             |  logica: LogicaMediciones
+                                             |  rutaWeb: Text
+                                             |
+                                             |
  logica: LogicaMediciones, rutaWeb: Text --> ServidorREST() -->
- |
- |
- m: Medicion --> postMediciones() -->
-   codigo: N, cuerpo: Text <--
- |
- |
- codigo: N, cuerpo: Text <-- getMediciones() <--
- |
- |
- codigo: N, cuerpo: Text <-- getUltimaMedicion() <--
- |
- ------------------------------------------------
+                                             |
+                                             |
+                             m: Medicion --> postMediciones() -->
+                 codigo: N, cuerpo: Text <--
+                                             |
+                                             |
+                 codigo: N, cuerpo: Text <-- getMediciones() <--
+                                             |
+                                             |
+                 codigo: N, cuerpo: Text <-- getUltimaMedicion() <--
+                                             |
+                                             ------------------------------------------------
 ```
 
 Rutas (HTTP y JSON):

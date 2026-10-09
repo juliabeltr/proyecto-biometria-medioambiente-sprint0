@@ -21,24 +21,24 @@ Pantalla única "Última medición":
 ### Diseño lógico
 
 ```text
- --------- ControladorUX ------------------------
- |
- |  logica: LogicaNavegador
- |
- |
- logica: LogicaNavegador --> ControladorUX() -->
- |
- |
- iniciar() -->
- |
- |
- actualizar() -->
- |
- |
- m: Medicion --> formatearMedicion() --x
-   texto: (tipo: Text, valor: Text, fecha: Text, hora: Text) <--
- |
- ------------------------------------------------
+                                                               --------- ControladorUX ------------------------
+                                                               |
+                                                               |  logica: LogicaNavegador
+                                                               |
+                                                               |
+                                   logica: LogicaNavegador --> ControladorUX() -->
+                                                               |
+                                                               |
+                                                               iniciar() -->
+                                                               |
+                                                               |
+                                                               actualizar() -->
+                                                               |
+                                                               |
+                                               m: Medicion --> formatearMedicion() --x
+ texto: (tipo: Text, valor: Text, fecha: Text, hora: Text) <--
+                                                               |
+                                                               ------------------------------------------------
 ```
 
 ## 2. Aclaraciones del diseño

@@ -27,11 +27,14 @@ public:
 
   // .....................................................
   // .....................................................
-/**
- * @brief Devuelve una medida simulada de CO2.
- * Diseño lógico: medirCO2() -> N
- * @return Concentración simulada de CO2.
- * @note Sustituir por la lectura del sensor real.
+/*
+ * --------------------------------------------------------------
+ * Propósito: Devuelve una medida simulada de CO2.
+ * Diseño lógico:
+ *     N <-- medirCO2() -->
+ * Retorno: Concentración simulada de CO2.
+ * Nota: Sustituir por la lectura del sensor real.
+ * --------------------------------------------------------------
  */
   int medirCO2() {
 	return 235;
@@ -39,10 +42,13 @@ public:
 
   // .....................................................
   // .....................................................
-/**
- * @brief Devuelve una temperatura simulada.
- * Diseño lógico: medirTemperatura() -> Z
- * @return Temperatura simulada.
+/*
+ * --------------------------------------------------------------
+ * Propósito: Devuelve una temperatura simulada.
+ * Diseño lógico:
+ *     Z <-- medirTemperatura() -->
+ * Retorno: Temperatura simulada.
+ * --------------------------------------------------------------
  */
 
   int medirTemperatura() {

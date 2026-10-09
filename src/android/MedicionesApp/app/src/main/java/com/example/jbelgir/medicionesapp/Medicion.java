@@ -49,26 +49,98 @@ public final class Medicion {
         this.fechaHora = fechaHora;
     }
 
+    /*
+     * --------------------------------------------------------------
+     * Propósito: devuelve el campo id de la medición.
+     *
+     * Diseño lógico:
+     *     id: N <-- getId() <--
+     *
+     * Parámetros: ninguno.
+     * Retorno: id: N.
+     * Errores: ninguno.
+     * --------------------------------------------------------------
+     */
     public int getId() {
         return id;
     }
 
+    /*
+     * --------------------------------------------------------------
+     * Propósito: devuelve el campo tipo de la medición.
+     *
+     * Diseño lógico:
+     *     tipo: Text <-- getTipo() <--
+     *
+     * Parámetros: ninguno.
+     * Retorno: tipo: Text.
+     * Errores: ninguno.
+     * --------------------------------------------------------------
+     */
     public String getTipo() {
         return tipo;
     }
 
+    /*
+     * --------------------------------------------------------------
+     * Propósito: devuelve el campo valor de la medición.
+     *
+     * Diseño lógico:
+     *     valor: R <-- getValor() <--
+     *
+     * Parámetros: ninguno.
+     * Retorno: valor: R.
+     * Errores: ninguno.
+     * --------------------------------------------------------------
+     */
     public double getValor() {
         return valor;
     }
 
+    /*
+     * --------------------------------------------------------------
+     * Propósito: devuelve el campo latitud de la medición.
+     *
+     * Diseño lógico:
+     *     latitud: R <-- getLatitud() <--
+     *
+     * Parámetros: ninguno.
+     * Retorno: latitud: R.
+     * Errores: ninguno.
+     * --------------------------------------------------------------
+     */
     public double getLatitud() {
         return latitud;
     }
 
+    /*
+     * --------------------------------------------------------------
+     * Propósito: devuelve el campo longitud de la medición.
+     *
+     * Diseño lógico:
+     *     longitud: R <-- getLongitud() <--
+     *
+     * Parámetros: ninguno.
+     * Retorno: longitud: R.
+     * Errores: ninguno.
+     * --------------------------------------------------------------
+     */
     public double getLongitud() {
         return longitud;
     }
 
+    /*
+     * --------------------------------------------------------------
+     * Propósito: devuelve el campo fechaHora de la medición.
+     *
+     * Diseño lógico:
+     *     fechaHora: Text <-- getFechaHora() <--
+     *
+     * Parámetros: ninguno.
+     * Retorno: fechaHora: Text.
+     * Errores: ninguno.
+     * --------------------------------------------------------------
+     */
     public String getFechaHora() {
         return fechaHora;
     }

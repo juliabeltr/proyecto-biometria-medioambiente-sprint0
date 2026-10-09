@@ -7,24 +7,24 @@ Medicion = ( id: N, tipo: Text, valor: R, latitud: R, longitud: R, fechaHora: Te
 TipoMedicion = { CO2, TEMP, RUIDO }
 
 ```text
- --------- LogicaMediciones ---------------------
- |
- |  repositorio: RepositorioMediciones
- |
- |
+                                        --------- LogicaMediciones ---------------------
+                                        |
+                                        |  repositorio: RepositorioMediciones
+                                        |
+                                        |
  repositorio: RepositorioMediciones --> LogicaMediciones() -->
- |
- |
- m: Medicion --> guardarMedicion() -->
-   resultado: B <--
- |
- |
- Medicion <-- recuperarUltimaMedicion() <--
- |
- |
- [Medicion] <-- recuperarMediciones() <--
- |
- ------------------------------------------------
+                                        |
+                                        |
+                        m: Medicion --> guardarMedicion() -->
+                       resultado: B <--
+                                        |
+                                        |
+                           Medicion <-- recuperarUltimaMedicion() <--
+                                        |
+                                        |
+                         [Medicion] <-- recuperarMediciones() <--
+                                        |
+                                        ------------------------------------------------
 ```
 
 ## 2. Aclaraciones del diseño

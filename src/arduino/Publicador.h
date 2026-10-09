@@ -7,6 +7,8 @@
 #ifndef PUBLICADOR_H_INCLUIDO
 #define PUBLICADOR_H_INCLUIDO
 
+#include "Utilidades.h"
+
 // --------------------------------------------------------------
 // --------------------------------------------------------------
 class Publicador {
@@ -45,6 +47,14 @@ public:
 
   // ............................................................
   // ............................................................
+  /*
+   * --------------------------------------------------------------
+   * Propósito: crea el publicador de anuncios.
+   *
+   * Diseño lógico:
+   *     Publicador() -->
+   * --------------------------------------------------------------
+   */
   Publicador( ) {
 	// ATENCION: no hacerlo aquí. (*this).laEmisora.encenderEmisora();
 	// Pondremos un método para llamarlo desde el setup() más tarde
@@ -52,19 +62,38 @@ public:
 
   // ............................................................
   // ............................................................
+  /*
+   * --------------------------------------------------------------
+   * Propósito: enciende la emisora BLE (se llama desde setup()).
+   *
+   * Diseño lógico:
+   *     encenderEmisora() -->
+   * --------------------------------------------------------------
+   */
   void encenderEmisora() {
 	(*this).laEmisora.encenderEmisora();
   } // ()
 
   // ............................................................
   // ............................................................
+  /*
+   * --------------------------------------------------------------
+   * Propósito: emite un anuncio con el CO2, espera y lo detiene.
+   *
+   * Diseño lógico:
+   *     valor_co2: Z, contador: N, tiempo_espera: Z --> publicarCO2() -->
+   *
+   * Parámetros: valor en el minor, contador en el byte bajo del major,
+   * tiempo_espera en milisegundos.
+   * --------------------------------------------------------------
+   */
   void publicarCO2( int16_t valorCO2, uint8_t contador,
 					long tiempoEspera ) {
 
 	//
 	// 1. empezamos anuncio
 	//
-	uint16_t major = (MedicionesID::CO2 << 8) + contador;
+	uint16_t major = calcularMajor(MedicionesID::CO2, contador);
 	(*this).laEmisora.emitirAnuncioIBeacon( (*this).beaconUUID, 
 											major,
 											valorCO2, // minor
@@ -94,10 +123,21 @@ public:
 
   // ............................................................
   // ............................................................
+  /*
+   * --------------------------------------------------------------
+   * Propósito: emite un anuncio con la temperatura, espera y lo detiene.
+   *
+   * Diseño lógico:
+   *     valor_temperatura: Z, contador: N, tiempo_espera: Z --> publicarTemperatura() -->
+   *
+   * Parámetros: valor en el minor, contador en el byte bajo del major,
+   * tiempo_espera en milisegundos.
+   * --------------------------------------------------------------
+   */
   void publicarTemperatura( int16_t valorTemperatura,
 							uint8_t contador, long tiempoEspera ) {
 
-	uint16_t major = (MedicionesID::TEMPERATURA << 8) + contador;
+	uint16_t major = calcularMajor(MedicionesID::TEMPERATURA, contador);
 	(*this).laEmisora.emitirAnuncioIBeacon( (*this).beaconUUID, 
 											major,
 											valorTemperatura, // minor
@@ -108,10 +148,26 @@ public:
 	(*this).laEmisora.detenerAnuncio();
   } // ()
 
+  /*
+   * --------------------------------------------------------------
+   * Propósito: emite un anuncio iBeacon con una carga libre (sin esperar).
+   *
+   * Diseño lógico:
+   *     carga: Text, tamanyo_carga: N --> emitirAnuncioLibre() -->
+   * --------------------------------------------------------------
+   */
   void emitirAnuncioLibre(const char * carga, uint8_t tamanyoCarga) {
     (*this).laEmisora.emitirAnuncioIBeaconLibre(carga, tamanyoCarga);
   }
 
+  /*
+   * --------------------------------------------------------------
+   * Propósito: detiene el anuncio en curso.
+   *
+   * Diseño lógico:
+   *     detenerAnuncio() -->
+   * --------------------------------------------------------------
+   */
   void detenerAnuncio() {
     (*this).laEmisora.detenerAnuncio();
   }

@@ -5,29 +5,33 @@
 ### Tabla relacional
 
 ```text
+====================================================================================
 TABLE: MEDICIONES
 
-DESCRIPTION:
-  Mediciones ambientales recibidas por el sistema. Cada fila es una medición
-  de un tipo de contaminante en un lugar y un instante.
+DESCRIPTION: Mediciones ambientales recibidas por el sistema. Cada fila es una
+medición de un tipo de contaminante en un lugar y un instante.
 
 COLUMNS:
-  id         INTEGER  NOT NULL  Identificador único. Lo asigna la base de datos.
-  tipo       TEXT     NOT NULL  Tipo de contaminante: CO2, TEMP o RUIDO.
-  valor      REAL     NOT NULL  Valor medido.
-  latitud    REAL     NOT NULL  Latitud en grados.
-  longitud   REAL     NOT NULL  Longitud en grados.
-  fechaHora  TEXT     NOT NULL  Fecha y hora de la medición en ISO 8601 (UTC).
 
-PRIMARY KEY:
-  id (autoincremental)
++ id | INTEGER | NOT NULL | Auto-Increment
++ tipo | TEXT | NOT NULL
++ valor | REAL | NOT NULL
++ latitud | REAL | NOT NULL
++ longitud | REAL | NOT NULL
++ fechaHora | TEXT | NOT NULL
+
+PRIMARY KEY: id
 
 FOREIGN KEYS:
-  (ninguna)
+
++ (ninguna)
 
 CONSTRAINTS:
-  - Las seis columnas son NOT NULL.
-  - id es AUTOINCREMENT: no se puede asignar desde fuera.
+
++ tipo solo admite los valores CO2, TEMP o RUIDO (lo comprueba la lógica de negocio).
++ fechaHora se guarda en formato ISO 8601 (UTC).
++ id lo asigna la base de datos y no se puede asignar desde fuera.
+====================================================================================
 ```
 
 ### Rutinas de acceso a datos
@@ -37,24 +41,24 @@ Medicion = ( id: N, tipo: Text, valor: R, latitud: R, longitud: R, fechaHora: Te
 Cada `Medicion` corresponde a una fila de la tabla `MEDICIONES`, con una columna por campo y el mismo nombre.
 
 ```text
- --------- RepositorioMediciones ---------------
- |
- |  conexion: conexión a la base de datos
- |
- |
- ruta: Text --> RepositorioMediciones() -->
- |
- |
+                 --------- RepositorioMediciones ---------------
+                 |
+                 |  conexion: conexión a la base de datos
+                 |
+                 |
+  ruta: Text --> RepositorioMediciones() -->
+                 |
+                 |
  m: Medicion --> insertar() -->
-   id: N     <--
- |
- |
- Medicion <-- recuperarUltima() <--
- |
- |
- [Medicion] <-- recuperarTodas() <--
- |
- -----------------------------------------------
+       id: N <--
+                 |
+                 |
+    Medicion <-- recuperarUltima() <--
+                 |
+                 |
+  [Medicion] <-- recuperarTodas() <--
+                 |
+                 -----------------------------------------------
 ```
 
 ## 2. Aclaraciones del diseño

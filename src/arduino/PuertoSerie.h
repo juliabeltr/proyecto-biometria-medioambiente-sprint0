@@ -7,36 +7,42 @@
 // Júlia Beltrán Girbés
 // ----------------------------------------------------------
 
-/**
- * @brief Clase encargada de gestionar la comunicación por puerto serie.
+/*
+ * --------------------------------------------------------------
+ * Propósito: Clase encargada de gestionar la comunicación por puerto serie.
  *
  * Permite inicializar el puerto, esperar a que esté disponible
  * y escribir mensajes de distintos tipos.
+ * --------------------------------------------------------------
  */
 class PuertoSerie {
 
 public:
 
-  /**
-   * @brief Constructor del puerto serie.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Constructor del puerto serie.
    *
    * Diseño lógico:
-   * baudios: N --> PuertoSerie()
+   * baudios: N --> PuertoSerie() -->
    *
-   * @param baudios Velocidad de comunicación en baudios.
+   * Parámetro: baudios Velocidad de comunicación en baudios.
+   * --------------------------------------------------------------
    */
   PuertoSerie(long baudios) {
     Serial.begin(baudios);
   }
 
-  /**
-   * @brief Espera hasta que el puerto serie esté disponible.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Espera hasta que el puerto serie esté disponible.
    *
    * Diseño lógico:
-   * esperarDisponible()
+   * esperarDisponible() -->
    *
-   * @note Utiliza una espera bloqueante de 10 ms mientras
+   * Nota: Utiliza una espera bloqueante de 10 ms mientras
    * el puerto no está disponible.
+   * --------------------------------------------------------------
    */
   void esperarDisponible() {
 
@@ -45,14 +51,16 @@ public:
     }
   }
 
-  /**
-   * @brief Escribe un mensaje por el puerto serie.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Escribe un mensaje por el puerto serie.
    *
    * Diseño lógico:
-   * mensaje --> escribir()
+   * mensaje: Text --> escribir() -->
    *
-   * @tparam T Tipo del dato que se desea escribir.
-   * @param mensaje Valor que se enviará por el puerto serie.
+   * Tipo genérico: T Tipo del dato que se desea escribir.
+   * Parámetro: mensaje Valor que se enviará por el puerto serie.
+   * --------------------------------------------------------------
    */
   template<typename T>
   void escribir(T mensaje) {

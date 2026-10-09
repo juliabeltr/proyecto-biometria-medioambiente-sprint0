@@ -9,54 +9,54 @@ Medicion = ( id: N, tipo: Text, valor: R, latitud: R, longitud: R, fechaHora: Te
 Es un subconjunto de la lógica de negocio del servidor (`business_logic_design.md`), con firmas idénticas.
 
 ```text
- --------- FrontendBusinessLogic (interfaz) -----
- |
- |
- Medicion <-- recuperarUltimaMedicion() <--
- |
- |
+                --------- FrontendBusinessLogic (interfaz) -----
+                |
+                |
+   Medicion <-- recuperarUltimaMedicion() <--
+                |
+                |
  [Medicion] <-- recuperarMediciones() <--
- |
- ------------------------------------------------
+                |
+                ------------------------------------------------
 ```
 
 ### Implementación real (proxy del servidor)
 
 ```text
- --------- LogicaNavegador ----------------------
- |
- |  urlBase: Text
- |
- |
+                   --------- LogicaNavegador ----------------------
+                   |
+                   |  urlBase: Text
+                   |
+                   |
  urlBase: Text --> LogicaNavegador() -->
- |
- |
- Medicion <-- recuperarUltimaMedicion() <--
- |
- |
- [Medicion] <-- recuperarMediciones() <--
- |
- ------------------------------------------------
+                   |
+                   |
+      Medicion <-- recuperarUltimaMedicion() <--
+                   |
+                   |
+    [Medicion] <-- recuperarMediciones() <--
+                   |
+                   ------------------------------------------------
 ```
 
 ### Implementación fake (datos simulados)
 
 ```text
- --------- LogicaNavegadorFake ------------------
- |
- |  mediciones: [Medicion]
- |  falla: B
- |
- |
+                                      --------- LogicaNavegadorFake ------------------
+                                      |
+                                      |  mediciones: [Medicion]
+                                      |  falla: B
+                                      |
+                                      |
  mediciones: [Medicion], falla: B --> LogicaNavegadorFake() -->
- |
- |
- Medicion <-- recuperarUltimaMedicion() <--
- |
- |
- [Medicion] <-- recuperarMediciones() <--
- |
- ------------------------------------------------
+                                      |
+                                      |
+                         Medicion <-- recuperarUltimaMedicion() <--
+                                      |
+                                      |
+                       [Medicion] <-- recuperarMediciones() <--
+                                      |
+                                      ------------------------------------------------
 ```
 
 ## 2. Aclaraciones del diseño

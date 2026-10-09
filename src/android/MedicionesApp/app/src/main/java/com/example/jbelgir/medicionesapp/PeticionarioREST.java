@@ -15,32 +15,38 @@ import java.nio.charset.StandardCharsets;
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-/**
+/*
+ * --------------------------------------------------------------
  * Clase encargada de realizar peticiones REST en segundo plano.
  *
  * Utiliza HttpURLConnection para enviar una petición HTTP y devuelve
  * el código de respuesta y el cuerpo mediante un callback.
  *
- * @deprecated AsyncTask está obsoleto en versiones modernas de Android.
+ * Obsoleto: AsyncTask está obsoleto en versiones modernas de Android.
  * Se mantiene aquí porque forma parte del ejemplo original de la práctica.
+ * --------------------------------------------------------------
  */
 public class PeticionarioREST extends AsyncTask<Void, Void, Boolean> {
 
     private static final String ETIQUETA_LOG = "clienterestandroid";
 
-    /**
+    /*
+     * --------------------------------------------------------------
      * Interfaz utilizada para devolver el resultado de la petición REST.
+     * --------------------------------------------------------------
      */
     public interface RespuestaREST {
 
-        /**
+        /*
+         * --------------------------------------------------------------
          * Se ejecuta cuando termina la petición.
          *
          * Diseño lógico:
          * codigo: Z, cuerpo: Text --> callback()
          *
-         * @param codigo Código HTTP recibido.
-         * @param cuerpo Cuerpo de la respuesta.
+         * Parámetro: codigo Código HTTP recibido.
+         * Parámetro: cuerpo Cuerpo de la respuesta.
+         * --------------------------------------------------------------
          */
         void callback(int codigo, String cuerpo);
     }
@@ -53,7 +59,8 @@ public class PeticionarioREST extends AsyncTask<Void, Void, Boolean> {
     private int codigoRespuesta = 0;
     private String cuerpoRespuesta = "";
 
-    /**
+    /*
+     * --------------------------------------------------------------
      * Configura y ejecuta una petición REST.
      *
      * Diseño lógico:
@@ -63,10 +70,11 @@ public class PeticionarioREST extends AsyncTask<Void, Void, Boolean> {
      * respuesta: RespuestaREST
      *      --> hacerPeticionREST()
      *
-     * @param metodo Método HTTP: GET, POST, PUT, DELETE, etc.
-     * @param urlDestino URL de destino.
-     * @param cuerpo Cuerpo de la petición. Puede ser null.
-     * @param laRespuesta Callback que recibirá el resultado.
+     * Parámetro: metodo Método HTTP: GET, POST, PUT, DELETE, etc.
+     * Parámetro: urlDestino URL de destino.
+     * Parámetro: cuerpo Cuerpo de la petición. Puede ser null.
+     * Parámetro: laRespuesta Callback que recibirá el resultado.
+     * --------------------------------------------------------------
      */
     public void hacerPeticionREST(
             String metodo,
@@ -101,8 +109,10 @@ public class PeticionarioREST extends AsyncTask<Void, Void, Boolean> {
         this.execute();
     }
 
-    /**
+    /*
+     * --------------------------------------------------------------
      * Constructor.
+     * --------------------------------------------------------------
      */
     public PeticionarioREST() {
 
@@ -112,14 +122,16 @@ public class PeticionarioREST extends AsyncTask<Void, Void, Boolean> {
         );
     }
 
-    /**
+    /*
+     * --------------------------------------------------------------
      * Ejecuta la petición HTTP en segundo plano.
      *
      * Diseño lógico:
-     * doInBackground() --> B
-     *
-     * @return true si la petición ha podido ejecutarse;
+     * doInBackground() -->
+     *     B <--
+     * Retorno: true si la petición ha podido ejecutarse;
      * false si se ha producido una excepción.
+     * --------------------------------------------------------------
      */
     @Override
     protected Boolean doInBackground(Void... params) {
@@ -318,14 +330,16 @@ public class PeticionarioREST extends AsyncTask<Void, Void, Boolean> {
         }
     }
 
-    /**
+    /*
+     * --------------------------------------------------------------
      * Se ejecuta en el hilo principal una vez terminada
      * la petición en segundo plano.
      *
      * Diseño lógico:
      * como_fue: B --> onPostExecute()
      *
-     * @param comoFue true si la petición terminó sin excepciones.
+     * Parámetro: comoFue true si la petición terminó sin excepciones.
+     * --------------------------------------------------------------
      */
     @Override
     protected void onPostExecute(Boolean comoFue) {

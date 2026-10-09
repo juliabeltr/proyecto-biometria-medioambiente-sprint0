@@ -6,7 +6,8 @@ import java.util.Arrays;
 // Júlia Beltrán Girbés
 // -----------------------------------------------------------------------------------
 
-/**
+/*
+ * --------------------------------------------------------------
  * Representa y descompone una trama iBeacon.
  *
  * La trama esperada contiene:
@@ -17,6 +18,7 @@ import java.util.Arrays;
  * - TxPower: 1 byte
  *
  * Total mínimo esperado: 30 bytes.
+ * --------------------------------------------------------------
  */
 public class TramaIBeacon {
 
@@ -34,148 +36,161 @@ public class TramaIBeacon {
     private byte iBeaconType = 0;         // 1 byte
     private byte iBeaconLength = 0;       // 1 byte
 
-    /**
+    /*
+     * --------------------------------------------------------------
      * Devuelve el prefijo completo de la trama iBeacon.
      *
      * Diseño lógico:
-     * getPrefijo() --> [Z]_9
-     *
-     * @return Prefijo de 9 bytes.
+     * [Z]_9 <-- getPrefijo() <--
+     * Retorno: Prefijo de 9 bytes.
+     * --------------------------------------------------------------
      */
     public byte[] getPrefijo() {
         return prefijo;
     }
 
-    /**
+    /*
+     * --------------------------------------------------------------
      * Devuelve el UUID del iBeacon.
      *
      * Diseño lógico:
-     * getUUID() --> [Z]_16
-     *
-     * @return UUID de 16 bytes.
+     * [Z]_16 <-- getUUID() <--
+     * Retorno: UUID de 16 bytes.
+     * --------------------------------------------------------------
      */
     public byte[] getUUID() {
         return uuid;
     }
 
-    /**
+    /*
+     * --------------------------------------------------------------
      * Devuelve el campo major.
      *
      * Diseño lógico:
-     * getMajor() --> [Z]_2
-     *
-     * @return Campo major de 2 bytes.
+     * [Z]_2 <-- getMajor() <--
+     * Retorno: Campo major de 2 bytes.
+     * --------------------------------------------------------------
      */
     public byte[] getMajor() {
         return major;
     }
 
-    /**
+    /*
+     * --------------------------------------------------------------
      * Devuelve el campo minor.
      *
      * Diseño lógico:
-     * getMinor() --> [Z]_2
-     *
-     * @return Campo minor de 2 bytes.
+     * [Z]_2 <-- getMinor() <--
+     * Retorno: Campo minor de 2 bytes.
+     * --------------------------------------------------------------
      */
     public byte[] getMinor() {
         return minor;
     }
 
-    /**
+    /*
+     * --------------------------------------------------------------
      * Devuelve el valor TxPower de la trama iBeacon.
      *
      * Diseño lógico:
-     * getTxPower() --> Z
-     *
-     * @return Valor TxPower.
+     * Z <-- getTxPower() <--
+     * Retorno: Valor TxPower.
+     * --------------------------------------------------------------
      */
     public byte getTxPower() {
         return txPower;
     }
 
-    /**
+    /*
+     * --------------------------------------------------------------
      * Devuelve la trama original completa.
      *
      * Diseño lógico:
-     * getLosBytes() --> [Z]
-     *
-     * @return Array de bytes original.
+     * [Z] <-- getLosBytes() <--
+     * Retorno: Array de bytes original.
+     * --------------------------------------------------------------
      */
     public byte[] getLosBytes() {
         return losBytes;
     }
 
-    /**
+    /*
+     * --------------------------------------------------------------
      * Devuelve los flags del anuncio BLE.
      *
      * Diseño lógico:
-     * getAdvFlags() --> [Z]_3
-     *
-     * @return Flags de publicidad BLE.
+     * [Z]_3 <-- getAdvFlags() <--
+     * Retorno: Flags de publicidad BLE.
+     * --------------------------------------------------------------
      */
     public byte[] getAdvFlags() {
         return advFlags;
     }
 
-    /**
+    /*
+     * --------------------------------------------------------------
      * Devuelve la cabecera del anuncio.
      *
      * Diseño lógico:
-     * getAdvHeader() --> [Z]_2
-     *
-     * @return Cabecera del anuncio.
+     * [Z]_2 <-- getAdvHeader() <--
+     * Retorno: Cabecera del anuncio.
+     * --------------------------------------------------------------
      */
     public byte[] getAdvHeader() {
         return advHeader;
     }
 
-    /**
+    /*
+     * --------------------------------------------------------------
      * Devuelve el identificador del fabricante.
      *
      * Diseño lógico:
-     * getCompanyID() --> [Z]_2
-     *
-     * @return Company ID de 2 bytes.
+     * [Z]_2 <-- getCompanyID() <--
+     * Retorno: Company ID de 2 bytes.
+     * --------------------------------------------------------------
      */
     public byte[] getCompanyID() {
         return companyID;
     }
 
-    /**
+    /*
+     * --------------------------------------------------------------
      * Devuelve el tipo de iBeacon.
      *
      * Diseño lógico:
-     * getiBeaconType() --> Z
-     *
-     * @return Tipo de iBeacon.
+     * Z <-- getiBeaconType() <--
+     * Retorno: Tipo de iBeacon.
+     * --------------------------------------------------------------
      */
     public byte getiBeaconType() {
         return iBeaconType;
     }
 
-    /**
+    /*
+     * --------------------------------------------------------------
      * Devuelve la longitud declarada de la carga iBeacon.
      *
      * Diseño lógico:
-     * getiBeaconLength() --> Z
-     *
-     * @return Longitud indicada en la trama.
+     * Z <-- getiBeaconLength() <--
+     * Retorno: Longitud indicada en la trama.
+     * --------------------------------------------------------------
      */
     public byte getiBeaconLength() {
         return iBeaconLength;
     }
 
-    /**
+    /*
+     * --------------------------------------------------------------
      * Construye una TramaIBeacon a partir de un array de bytes.
      *
      * Diseño lógico:
      * bytes: [Z] --> TramaIBeacon()
      *
-     * @param bytes Trama BLE que se quiere interpretar como iBeacon.
+     * Parámetro: bytes Trama BLE que se quiere interpretar como iBeacon.
      *
-     * @throws IllegalArgumentException Si la trama es nula o contiene
+     * Errores: IllegalArgumentException Si la trama es nula o contiene
      * menos de 30 bytes.
+     * --------------------------------------------------------------
      */
     public TramaIBeacon(byte[] bytes) {
 

@@ -97,7 +97,15 @@ npm test
 
 Ejecuta con Jest los tests automáticos de los cinco componentes del servidor y la web (`database`, `business_logic`, `communication`, `frontend_business_logic` y `gui`). Cada componente se prueba aislado, sustituyendo el siguiente por una versión simulada.
 
-La app Android tiene tests JUnit en `src/android/MedicionesApp/app/src/test` (clic derecho sobre la carpeta `test` en Android Studio → Run Tests). El código de la placa no tiene tests automáticos: se comprueba compilando en el Arduino IDE y con la prueba completa.
+La app Android tiene tests JUnit en `src/android/MedicionesApp/app/src/test` (clic derecho sobre la carpeta `test` en Android Studio → Run Tests). Las funciones puras de la placa (`src/arduino/Utilidades.h`) tienen tests en C++ que se ejecutan en el ordenador:
+
+```bash
+cd src/arduino
+g++ -std=c++11 -I. tests/test_utilidades.cpp -o test_utilidades
+./test_utilidades
+```
+
+El resto del código de la placa depende del hardware: se comprueba compilando en el Arduino IDE y con la prueba completa.
 
 ### Criterio de aceptación del Sprint 0 (reproducible)
 

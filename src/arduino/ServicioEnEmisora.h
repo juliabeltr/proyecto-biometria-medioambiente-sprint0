@@ -8,107 +8,30 @@
 #define SERVICIO_EMISORA_H_INCLUIDO
 
 #include <vector>
-
-// ----------------------------------------------------------
-// Utilidades
-// ----------------------------------------------------------
-
-/**
- * @brief Invierte el contenido de un array sobre el mismo array.
- *
- * Diseño lógico:
- * datos: [T], n: N --> alReves() --> [T]
- *
- * @tparam T Tipo de los elementos del array.
- * @param p Puntero al primer elemento del array.
- * @param n Número de elementos.
- *
- * @return Puntero al array invertido.
- */
-template<typename T>
-T * alReves(T * p, int n) {
-
-  if (p == nullptr || n <= 0) {
-    return p;
-  }
-
-  T aux;
-
-  for (int i = 0; i < n / 2; i++) {
-    aux = p[i];
-    p[i] = p[n - i - 1];
-    p[n - i - 1] = aux;
-  }
-
-  return p;
-}
-
-/**
- * @brief Copia un texto en un array de uint8_t en orden inverso.
- *
- * Diseño lógico:
- * texto: Text, array: [N], tam_max: N
- *      --> stringAUint8AlReves() --> [N]
- *
- * @param pString Texto que se desea copiar.
- * @param pUint Array de destino.
- * @param tamMax Tamaño máximo del array destino.
- *
- * @return Puntero al array de destino.
- */
-uint8_t * stringAUint8AlReves(
-  const char * pString,
-  uint8_t * pUint,
-  int tamMax
-) {
-
-  // Evita accesos inválidos a memoria.
-  if (pString == nullptr ||
-      pUint == nullptr ||
-      tamMax <= 0) {
-
-    return pUint;
-  }
-
-  int longitudString = strlen(pString);
-
-  int longitudCopiar =
-    (longitudString > tamMax)
-      ? tamMax
-      : longitudString;
-
-  /*
-   * Copia el texto de forma inversa dentro del array.
-   * Se utiliza para construir UUIDs en el formato esperado
-   * por la biblioteca BLE.
-   */
-  for (int i = 0; i < longitudCopiar; i++) {
-
-    pUint[tamMax - i - 1] =
-      pString[i];
-  }
-
-  return pUint;
-}
+#include "Utilidades.h"
 
 // ----------------------------------------------------------
 // ServicioEnEmisora
 // ----------------------------------------------------------
 
-/**
- * @brief Representa un servicio BLE que puede contener
+/*
+ * --------------------------------------------------------------
+ * Propósito: Representa un servicio BLE que puede contener
  * distintas características.
  *
  * Permite crear un servicio, añadir características
  * y activarlas sobre la emisora BLE.
+ * --------------------------------------------------------------
  */
 class ServicioEnEmisora {
 
 public:
 
-  /**
-   * @brief Tipo de callback ejecutado cuando una característica
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Tipo de callback ejecutado cuando una característica
    * recibe una escritura.
+   * --------------------------------------------------------------
    */
   using CallbackCaracteristicaEscrita =
     void (
@@ -122,9 +45,11 @@ public:
   // Caracteristica
   // --------------------------------------------------------
 
-  /**
-   * @brief Representa una característica perteneciente
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Representa una característica perteneciente
    * a un servicio BLE.
+   * --------------------------------------------------------------
    */
   class Caracteristica {
 
@@ -148,15 +73,17 @@ public:
 
   public:
 
-    /**
-     * @brief Constructor de una característica BLE.
+    /*
+     * --------------------------------------------------------------
+     * Propósito: Constructor de una característica BLE.
      *
      * Diseño lógico:
      * nombre_caracteristica: Text
      *      --> Caracteristica()
      *
-     * @param nombreCaracteristica_ Nombre utilizado para
+     * Parámetro: nombreCaracteristica_ Nombre utilizado para
      * construir el UUID.
+     * --------------------------------------------------------------
      */
     Caracteristica(
       const char * nombreCaracteristica_
@@ -172,8 +99,9 @@ public:
     {
     }
 
-    /**
-     * @brief Constructor que permite configurar además las
+    /*
+     * --------------------------------------------------------------
+     * Propósito: Constructor que permite configurar además las
      * propiedades, permisos y tamaño máximo de los datos.
      *
      * Diseño lógico:
@@ -183,6 +111,7 @@ public:
      * permiso_escritura,
      * tamanyo: N
      *      --> Caracteristica()
+     * --------------------------------------------------------------
      */
     Caracteristica(
       const char * nombreCaracteristica_,
@@ -205,11 +134,13 @@ public:
 
   private:
 
-    /**
-     * @brief Configura las propiedades de la característica.
+    /*
+     * --------------------------------------------------------------
+     * Propósito: Configura las propiedades de la característica.
      *
      * Por ejemplo:
      * CHR_PROPS_WRITE, CHR_PROPS_READ o CHR_PROPS_NOTIFY.
+     * --------------------------------------------------------------
      */
     void asignarPropiedades(
       uint8_t props
@@ -220,8 +151,10 @@ public:
       );
     }
 
-    /**
-     * @brief Configura los permisos de lectura y escritura.
+    /*
+     * --------------------------------------------------------------
+     * Propósito: Configura los permisos de lectura y escritura.
+     * --------------------------------------------------------------
      */
     void asignarPermisos(
       BleSecurityMode permisoRead,
@@ -234,11 +167,13 @@ public:
       );
     }
 
-    /**
-     * @brief Establece el tamaño máximo de los datos
+    /*
+     * --------------------------------------------------------------
+     * Propósito: Establece el tamaño máximo de los datos
      * de la característica.
      *
-     * @param tam Tamaño máximo permitido.
+     * Parámetro: tam Tamaño máximo permitido.
+     * --------------------------------------------------------------
      */
     void asignarTamanyoDatos(
       uint8_t tam
@@ -251,9 +186,11 @@ public:
 
   public:
 
-    /**
-     * @brief Configura propiedades, permisos y tamaño
+    /*
+     * --------------------------------------------------------------
+     * Propósito: Configura propiedades, permisos y tamaño
      * de los datos de una característica.
+     * --------------------------------------------------------------
      */
     void asignarPropiedadesPermisosYTamanyoDatos(
       uint8_t props,
@@ -272,15 +209,17 @@ public:
       asignarTamanyoDatos(tam);
     }
 
-    /**
-     * @brief Escribe un texto en la característica BLE.
+    /*
+     * --------------------------------------------------------------
+     * Propósito: Escribe un texto en la característica BLE.
      *
      * Diseño lógico:
-     * datos: Text --> escribirDatos() --> N
+     * datos: Text --> escribirDatos() -->
+     * N <--
+     * Parámetro: str Texto que se desea escribir.
      *
-     * @param str Texto que se desea escribir.
-     *
-     * @return Número de bytes escritos.
+     * Retorno: Número de bytes escritos.
+     * --------------------------------------------------------------
      */
     uint16_t escribirDatos(
       const char * str
@@ -298,15 +237,17 @@ public:
       return r;
     }
 
-    /**
-     * @brief Envía una notificación BLE con los datos indicados.
+    /*
+     * --------------------------------------------------------------
+     * Propósito: Envía una notificación BLE con los datos indicados.
      *
      * Diseño lógico:
-     * datos: Text --> notificarDatos() --> N
+     * datos: Text --> notificarDatos() -->
+     * N <--
+     * Parámetro: str Texto que se desea notificar.
      *
-     * @param str Texto que se desea notificar.
-     *
-     * @return Resultado de la operación de notificación.
+     * Retorno: Resultado de la operación de notificación.
+     * --------------------------------------------------------------
      */
     uint16_t notificarDatos(
       const char * str
@@ -324,9 +265,11 @@ public:
       return r;
     }
 
-    /**
-     * @brief Instala el callback que se ejecutará cuando
+    /*
+     * --------------------------------------------------------------
+     * Propósito: Instala el callback que se ejecutará cuando
      * se escriba en la característica.
+     * --------------------------------------------------------------
      */
     void instalarCallbackCaracteristicaEscrita(
       CallbackCaracteristicaEscrita cb
@@ -337,11 +280,13 @@ public:
       );
     }
 
-    /**
-     * @brief Activa la característica BLE.
+    /*
+     * --------------------------------------------------------------
+     * Propósito: Activa la característica BLE.
      *
      * Llama a begin() sobre la característica e informa
      * del código de error mediante el puerto serie.
+     * --------------------------------------------------------------
      */
     void activar() {
 
@@ -388,15 +333,17 @@ private:
 
 public:
 
-  /**
-   * @brief Constructor del servicio BLE.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Constructor del servicio BLE.
    *
    * Diseño lógico:
    * nombre_servicio: Text
    *      --> ServicioEnEmisora()
    *
-   * @param nombreServicio_ Nombre utilizado para
+   * Parámetro: nombreServicio_ Nombre utilizado para
    * construir el UUID del servicio.
+   * --------------------------------------------------------------
    */
   ServicioEnEmisora(
     const char * nombreServicio_
@@ -412,10 +359,12 @@ public:
   {
   }
 
-  /**
-   * @brief Escribe el UUID del servicio por el puerto serie.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Escribe el UUID del servicio por el puerto serie.
    *
    * Método de apoyo para depuración.
+   * --------------------------------------------------------------
    */
   void escribeUUID() {
 
@@ -432,12 +381,14 @@ public:
     );
   }
 
-  /**
-   * @brief Añade una característica al servicio.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Añade una característica al servicio.
    *
    * Diseño lógico:
    * caracteristica: Caracteristica
    *      --> anyadirCaracteristica()
+   * --------------------------------------------------------------
    */
   void anyadirCaracteristica(
     Caracteristica & car
@@ -448,14 +399,16 @@ public:
     );
   }
 
-  /**
-   * @brief Activa el servicio y todas sus características.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Activa el servicio y todas sus características.
    *
    * Diseño lógico:
    * activarServicio()
    *
    * Primero se inicia el servicio BLE y después
    * se activan las características asociadas.
+   * --------------------------------------------------------------
    */
   void activarServicio() {
 
@@ -485,11 +438,13 @@ public:
     }
   }
 
-  /**
-   * @brief Permite utilizar ServicioEnEmisora allí donde
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Permite utilizar ServicioEnEmisora allí donde
    * la biblioteca necesite un BLEService.
    *
-   * @return Referencia al servicio BLE interno.
+   * Retorno: Referencia al servicio BLE interno.
+   * --------------------------------------------------------------
    */
   operator BLEService&() {
 

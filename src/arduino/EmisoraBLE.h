@@ -18,11 +18,13 @@
 
 #include "ServicioEnEmisora.h"
 
-/**
- * @brief Gestiona la emisora Bluetooth Low Energy de la placa.
+/*
+ * --------------------------------------------------------------
+ * Propósito: Gestiona la emisora Bluetooth Low Energy de la placa.
  *
  * Permite inicializar Bluefruit, emitir y detener anuncios iBeacon,
  * añadir servicios BLE y gestionar callbacks de conexión.
+ * --------------------------------------------------------------
  */
 class EmisoraBLE {
 
@@ -40,8 +42,9 @@ public:
   using CallbackConexionTerminada =
     void (uint16_t connHandle, uint8_t reason);
 
-  /**
-   * @brief Constructor de la emisora BLE.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Constructor de la emisora BLE.
    *
    * Diseño lógico:
    * nombre_emisora: Text,
@@ -49,11 +52,12 @@ public:
    * tx_power: Z
    *      --> EmisoraBLE()
    *
-   * @param nombreEmisora_ Nombre visible de la emisora.
-   * @param fabricanteID_ Identificador del fabricante.
-   * @param txPower_ Potencia de transmisión configurada.
+   * Parámetro: nombreEmisora_ Nombre visible de la emisora.
+   * Parámetro: fabricanteID_ Identificador del fabricante.
+   * Parámetro: txPower_ Potencia de transmisión configurada.
    *
-   * @note La emisora no se inicia en el constructor.
+   * Nota: La emisora no se inicia en el constructor.
+   * --------------------------------------------------------------
    */
   EmisoraBLE(
     const char * nombreEmisora_,
@@ -92,14 +96,16 @@ public:
    * }
    */
 
-  /**
-   * @brief Inicializa la emisora BLE.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Inicializa la emisora BLE.
    *
    * Diseño lógico:
-   * encenderEmisora()
+   * encenderEmisora() -->
    *
    * Inicializa Bluefruit y garantiza que no exista
    * ningún anuncio activo inicialmente.
+   * --------------------------------------------------------------
    */
   void encenderEmisora() {
 
@@ -109,13 +115,15 @@ public:
     (*this).detenerAnuncio();
   }
 
-  /**
-   * @brief Inicializa la emisora BLE e instala callbacks de conexión.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Inicializa la emisora BLE e instala callbacks de conexión.
    *
    * Diseño lógico:
    * callback_conexion_establecida,
    * callback_conexion_terminada
    *      --> encenderEmisora()
+   * --------------------------------------------------------------
    */
   void encenderEmisora(
     CallbackConexionEstablecida cbce,
@@ -128,11 +136,13 @@ public:
     instalarCallbackConexionTerminada(cbct);
   }
 
-  /**
-   * @brief Detiene el anuncio BLE si está activo.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Detiene el anuncio BLE si está activo.
    *
    * Diseño lógico:
-   * detenerAnuncio()
+   * detenerAnuncio() -->
+   * --------------------------------------------------------------
    */
   void detenerAnuncio() {
 
@@ -141,21 +151,24 @@ public:
     }
   }
 
-  /**
-   * @brief Indica si existe actualmente un anuncio BLE activo.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Indica si existe actualmente un anuncio BLE activo.
    *
    * Diseño lógico:
-   * estaAnunciando() -> B
+   * B <-- estaAnunciando() -->
    *
-   * @return true si la emisora está anunciando;
+   * Retorno: true si la emisora está anunciando;
    * false en caso contrario.
+   * --------------------------------------------------------------
    */
   bool estaAnunciando() {
     return Bluefruit.Advertising.isRunning();
   }
 
-  /**
-   * @brief Emite un anuncio Bluetooth LE en formato iBeacon.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Emite un anuncio Bluetooth LE en formato iBeacon.
    *
    * Diseño lógico:
    * beacon_uuid: [N]_16,
@@ -164,10 +177,11 @@ public:
    * rssi: Z
    *      --> emitirAnuncioIBeacon()
    *
-   * @param beaconUUID UUID de 16 bytes del iBeacon.
-   * @param major Campo major del iBeacon.
-   * @param minor Campo minor del iBeacon.
-   * @param rssi Potencia de referencia incluida en el anuncio.
+   * Parámetro: beaconUUID UUID de 16 bytes del iBeacon.
+   * Parámetro: major Campo major del iBeacon.
+   * Parámetro: minor Campo minor del iBeacon.
+   * Parámetro: rssi Potencia de referencia incluida en el anuncio.
+   * --------------------------------------------------------------
    */
   void emitirAnuncioIBeacon(
     uint8_t * beaconUUID,
@@ -243,19 +257,21 @@ public:
   // Total de datos configurables en esta parte: 21 bytes.
   // ----------------------------------------------------------
 
-  /**
-   * @brief Emite un anuncio iBeacon utilizando una carga personalizada.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Emite un anuncio iBeacon utilizando una carga personalizada.
    *
    * Diseño lógico:
    * carga: Text,
    * tamanyo_carga: N
-   *      --> emitirAnuncioIBeaconLibre()
+   *      --> emitirAnuncioIBeaconLibre() -->
    *
-   * @param carga Datos que se desean transmitir.
-   * @param tamanyoCarga Tamaño de la carga.
+   * Parámetro: carga Datos que se desean transmitir.
+   * Parámetro: tamanyoCarga Tamaño de la carga.
    *
-   * @note La carga útil está limitada a 21 bytes.
+   * Nota: La carga útil está limitada a 21 bytes.
    * Si se proporcionan más, solo se copian los primeros 21.
+   * --------------------------------------------------------------
    */
   void emitirAnuncioIBeaconLibre(
     const char * carga,
@@ -354,14 +370,16 @@ public:
     );
   }
 
-  /**
-   * @brief Añade un servicio BLE a la publicidad.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Añade un servicio BLE a la publicidad.
    *
    * Diseño lógico:
    * servicio: ServicioEnEmisora
-   *      --> anyadirServicio() --> B
-   *
-   * @return true si el servicio se ha añadido correctamente.
+   *      --> anyadirServicio() -->
+   * B <--
+   * Retorno: true si el servicio se ha añadido correctamente.
+   * --------------------------------------------------------------
    */
   bool anyadirServicio(
     ServicioEnEmisora & servicio
@@ -385,10 +403,12 @@ public:
     return r;
   }
 
-  /**
-   * @brief Añade un servicio BLE sin características adicionales.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Añade un servicio BLE sin características adicionales.
    *
-   * @return Resultado de añadir el servicio.
+   * Retorno: Resultado de añadir el servicio.
+   * --------------------------------------------------------------
    */
   bool anyadirServicioConSusCaracteristicas(
     ServicioEnEmisora & servicio
@@ -398,8 +418,10 @@ public:
     );
   }
 
-  /**
-   * @brief Añade características a un servicio de forma recursiva.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Añade características a un servicio de forma recursiva.
+   * --------------------------------------------------------------
    */
   template <typename ... T>
   bool anyadirServicioConSusCaracteristicas(
@@ -418,8 +440,10 @@ public:
     );
   }
 
-  /**
-   * @brief Añade las características y posteriormente activa el servicio.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Añade las características y posteriormente activa el servicio.
+   * --------------------------------------------------------------
    */
   template <typename ... T>
   bool anyadirServicioConSusCaracteristicasYActivar(
@@ -438,8 +462,10 @@ public:
     return r;
   }
 
-  /**
-   * @brief Instala el callback ejecutado al establecer una conexión BLE.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Instala el callback ejecutado al establecer una conexión BLE.
+   * --------------------------------------------------------------
    */
   void instalarCallbackConexionEstablecida(
     CallbackConexionEstablecida cb
@@ -449,8 +475,10 @@ public:
     );
   }
 
-  /**
-   * @brief Instala el callback ejecutado al terminar una conexión BLE.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Instala el callback ejecutado al terminar una conexión BLE.
+   * --------------------------------------------------------------
    */
   void instalarCallbackConexionTerminada(
     CallbackConexionTerminada cb
@@ -460,13 +488,15 @@ public:
     );
   }
 
-  /**
-   * @brief Obtiene una conexión BLE mediante su identificador.
+  /*
+   * --------------------------------------------------------------
+   * Propósito: Obtiene una conexión BLE mediante su identificador.
    *
-   * @param connHandle Identificador de la conexión.
-   * @return Puntero a la conexión BLE correspondiente.
+   * Parámetro: connHandle Identificador de la conexión.
+   * Retorno: Puntero a la conexión BLE correspondiente.
    *
-   * @note El resultado podría ser nulo si la conexión no existe.
+   * Nota: El resultado podría ser nulo si la conexión no existe.
+   * --------------------------------------------------------------
    */
   BLEConnection * getConexion(
     uint16_t connHandle

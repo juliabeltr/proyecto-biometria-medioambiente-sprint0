@@ -28,6 +28,24 @@ Flujo: `EscanerBeacons` → `MainActivity` → `ProcesadorBeacons` → `LogicaTe
                                                                            |
                                                            texto: Text <-- aJSON() <--
                                                                            |
+                                                                           |
+                                                                 id: N <-- getId() <--
+                                                                           |
+                                                                           |
+                                                            tipo: Text <-- getTipo() <--
+                                                                           |
+                                                                           |
+                                                              valor: R <-- getValor() <--
+                                                                           |
+                                                                           |
+                                                            latitud: R <-- getLatitud() <--
+                                                                           |
+                                                                           |
+                                                           longitud: R <-- getLongitud() <--
+                                                                           |
+                                                                           |
+                                                       fechaHora: Text <-- getFechaHora() <--
+                                                                           |
                                                                            ------------------------------------------------
 ```
 
@@ -312,6 +330,8 @@ UUID = ( masSignificativos: Z, menosSignificativos: Z )
 ```
 
 ## 2. Aclaraciones del diseño
+
+- `Medicion` es inmutable: tiene un getter por cada campo (`getId()`, `getTipo()`, `getValor()`, `getLatitud()`, `getLongitud()` y `getFechaHora()`), cada uno con su cabecera de diseño lógico.
 
 - La placa emite iBeacons con esta estructura: el UUID es el texto `EPSG-GTI-PROY-3A`, el `major` contiene en su byte alto el tipo de medición (11 = CO2, 12 = TEMP, 13 = RUIDO) y en el bajo un contador, y el `minor` contiene el valor medido como entero de 16 bits con signo.
 - `ConversorBeacon.convertir()`:

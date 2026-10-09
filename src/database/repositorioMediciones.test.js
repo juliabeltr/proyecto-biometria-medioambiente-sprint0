@@ -1,11 +1,11 @@
 // =============================================================================
 // repositorioMediciones.test.js
 //
-// Descripción: tests automáticos del componente bd (RepositorioMediciones).
+// Descripción: tests automáticos del componente database (RepositorioMediciones).
 // Autor:       Júlia Beltrán Girbés
 // Fecha:       02/10/2026
 // Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
-// Aportación:  Casos pedidos en doc/bd_design.md, con BD en memoria.
+// Aportación:  Casos pedidos en doc/database_design.md, con BD en memoria.
 // =============================================================================
 
 const RepositorioMediciones = require("./repositorioMediciones");

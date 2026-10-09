@@ -1,11 +1,11 @@
 // =============================================================================
 // logicaNavegador.test.js
 //
-// Descripción: tests automáticos del componente navegador (LogicaNavegador).
+// Descripción: tests automáticos del componente frontend_business_logic (LogicaNavegador).
 // Autor:       Júlia Beltrán Girbés
 // Fecha:       2026
 // Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
-// Aportación:  Casos pedidos en doc/navegador_design.md, con fetch simulado
+// Aportación:  Casos pedidos en doc/frontend_business_logic_design.md, con fetch simulado
 //              (sin servidor real).
 // =============================================================================
 

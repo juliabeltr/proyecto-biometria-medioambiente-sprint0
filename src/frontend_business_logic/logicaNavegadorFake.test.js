@@ -1,11 +1,11 @@
 // =============================================================================
 // logicaNavegadorFake.test.js
 //
-// Descripción: tests automáticos del componente navegador_fake.
+// Descripción: tests automáticos del componente frontend_business_logic (LogicaNavegadorFake).
 // Autor:       Júlia Beltrán Girbés
 // Fecha:       2026
 // Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
-// Aportación:  Casos pedidos en doc/navegador_fake_design.md.
+// Aportación:  Casos pedidos en doc/frontend_business_logic_design.md.
 // =============================================================================
 
 const LogicaNavegadorFake = require("./logicaNavegadorFake");

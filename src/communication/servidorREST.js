@@ -2,21 +2,21 @@
 // servidorREST.js
 //
 // Descripción: servidor REST (HTTP + JSON) que conecta los clientes con la
-//              lógica de negocio (componente rest).
+//              lógica de negocio (componente communication).
 // Autor:       Júlia Beltrán Girbés
 // Fecha:       2026
 // Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
-// Aportación:  Implementación de doc/rest_design.md. Solo recibe peticiones,
+// Aportación:  Implementación de doc/communication_design.md. Solo recibe peticiones,
 //              llama a la lógica y devuelve JSON. No contiene lógica de
 //              negocio ni accede a la base de datos. Además sirve los
-//              ficheros estáticos de la interfaz web (ux, navegador y
-//              navegador_fake) para que página y API compartan origen.
+//              ficheros estáticos de la interfaz web (gui y
+//              frontend_business_logic) para que página y API compartan origen.
 // =============================================================================
 
 const express = require("express");
 const path = require("path");
 
-const CARPETAS_WEB = ["ux", "navegador", "navegador_fake"];
+const CARPETAS_WEB = ["gui", "frontend_business_logic"];
 const CAMPOS_MEDICION = ["tipo", "valor", "latitud", "longitud", "fechaHora"];
 
 /*
@@ -36,8 +36,8 @@ class ServidorREST {
      *
      * Parámetros:
      *     logica: LogicaMediciones. Lógica de negocio a la que se llama.
-     *     rutaWeb: Text. Carpeta que contiene ux, navegador y
-     *              navegador_fake. Si no se indica, no se sirve ninguna
+     *     rutaWeb: Text. Carpeta que contiene gui y
+     *              frontend_business_logic. Si no se indica, no se sirve ninguna
      *              página (caso de los tests de la API).
      * Retorno: ninguno.
      * Errores: ninguno.
@@ -146,7 +146,7 @@ class ServidorREST {
 
     /*
      * --------------------------------------------------------------
-     * Propósito: sirve como ficheros estáticos solo las tres carpetas
+     * Propósito: sirve como ficheros estáticos solo las dos carpetas
      *            de la interfaz web. El código del servidor, de la
      *            lógica y de la base de datos nunca se publica.
      *
@@ -154,8 +154,8 @@ class ServidorREST {
      *     rutaWeb: Text --> servirInterfazWeb() -->
      *
      * Parámetros:
-     *     rutaWeb: Text. Carpeta que contiene ux, navegador y
-     *              navegador_fake.
+     *     rutaWeb: Text. Carpeta que contiene gui y
+     *              frontend_business_logic.
      * Retorno: ninguno.
      * Errores: ninguno.
      * --------------------------------------------------------------

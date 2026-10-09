@@ -1,12 +1,12 @@
 // =============================================================================
 // logicaNavegador.js
 //
-// Descripción: lógica real del navegador (componente navegador). Obtiene las
+// Descripción: lógica real del navegador (componente frontend_business_logic). Obtiene las
 //              mediciones llamando al API REST.
 // Autor:       Júlia Beltrán Girbés
 // Fecha:       2026
 // Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
-// Aportación:  Implementación de doc/navegador_design.md. Tiene la misma
+// Aportación:  Implementación de doc/frontend_business_logic_design.md. Tiene la misma
 //              interfaz que LogicaNavegadorFake. No accede al DOM ni valida
 //              reglas de negocio. Sus operaciones son asíncronas.
 // =============================================================================

@@ -1,12 +1,12 @@
 // =============================================================================
 // logicaMediciones.js
 //
-// Descripción: lógica de negocio de las mediciones (componente logica).
+// Descripción: lógica de negocio de las mediciones (componente business_logic).
 // Autor:       Júlia Beltrán Girbés
 // Fecha:       2026
 // Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
-// Aportación:  Implementación de doc/logica_design.md. Valida y gestiona
-//              mediciones. No contiene HTTP, JSON ni interfaz gráfica.
+// Aportación:  Implementación de doc/business_logic_design.md. Valida y gestiona
+//              mediciones. No depende de ningún mecanismo de comunicación ni de interfaz de usuario.
 //              El acceso a datos llega por el constructor.
 // =============================================================================
 

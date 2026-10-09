@@ -1,4 +1,4 @@
-# Diseño del componente: ux
+# Diseño del componente: gui
 
 ## 1. Diseño del componente
 
@@ -43,8 +43,8 @@ Pantalla única "Última medición":
 
 ## 2. Aclaraciones del diseño
 
-- `LogicaNavegador` es la lógica fake (`navegador_fake`) o la lógica real (`navegador`). Ambas tienen la misma interfaz, por lo que cambiar de una a otra no modifica la interfaz.
-- La interfaz obtiene los datos solo a través de `LogicaNavegador`. No accede a la base de datos, no hace peticiones HTTP y no contiene lógica de negocio.
+- `LogicaNavegador` es la lógica de negocio del cliente definida en `frontend_business_logic_design.md`: puede ser la implementación real (`LogicaNavegador`, que consulta al servidor) o la fake (`LogicaNavegadorFake`). Ambas tienen la misma interfaz, por lo que cambiar de una a otra no modifica la interfaz gráfica.
+- La interfaz obtiene los datos solo a través de `LogicaNavegador`. No accede a la base de datos, no contiene código de comunicación con el servidor y no contiene lógica de negocio.
 - `iniciar()` asocia el botón "Actualizar" a `actualizar()` y carga la última medición al abrir la página.
 - `actualizar()` pasa por los estados de la pantalla: cargando, y después con datos, sin datos o error.
 - `formatearMedicion()` separa `fechaHora` en fecha y hora, en la zona horaria del navegador. No accede al DOM.

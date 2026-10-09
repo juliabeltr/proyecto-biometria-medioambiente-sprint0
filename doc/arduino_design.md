@@ -284,6 +284,7 @@ La clase `Caracteristica` pertenece a `ServicioEnEmisora` (un servicio contiene 
 - `alReves()` es genérica (cualquier tipo de elemento) y `escribir()` acepta cualquier valor que se pueda escribir por el puerto serie.
 - `inicializarPlaquita()` está vacía en esta versión.
 - El nombre de la emisora es `GTI-3A`, el identificador de fabricante es `0x004C` y la potencia de transmisión es 4.
+- El programa principal está en `src/arduino/arduino.ino`: el Arduino IDE exige que el fichero `.ino` se llame igual que la carpeta del sketch, y los ficheros `.h` están en esa misma carpeta.
 - No se añaden clases ni operaciones que no aparezcan en este diseño.
 
 ## 3. Reglas generales

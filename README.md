@@ -1,67 +1,67 @@
 # proyecto-biometria-medioambiente-sprint0
 
-Repositorio correspondiente al Sprint 0 del proyecto de Biometría y Medioambiente.
+Repositorio del Sprint 0 del proyecto de Biometría y Medioambiente.
 
-Autora: Júlia Beltrán Girbés
+Autora: Julia Beltrán Girbés (ver `author.md`).
 
-Prototipo de una aplicación de crowdsensing para la recogida y visualización de mediciones ambientales.
+Prototipo de una aplicación de crowdsensing para la recogida y visualización de mediciones ambientales. El objetivo del Sprint 0 es una primera versión funcional que conecte todas las capas:
 
-El objetivo de este Sprint 0 es implementar una primera versión funcional del sistema, conectando las distintas capas de la aplicación:
+Sensor (placa Arduino) → App móvil Android → API REST → Lógica de negocio → Base de datos → Interfaz web
 
-Sensor → App Móvil → API REST → Lógica de negocio → Base de datos → Interfaz web
+## Funcionalidad
 
-## Funcionalidad principal
+- Recibir una medición ambiental, validarla y guardarla en una base de datos.
+- Recuperar la última medición y todas las mediciones almacenadas.
+- Mostrar la última medición en una página web.
 
-El sistema permite:
+Cada medición contiene: tipo de contaminante (`CO2`, `TEMP` o `RUIDO`), valor, latitud, longitud y fecha y hora (ISO 8601, en UTC).
 
-- recibir una medición ambiental;
-- almacenar la medición en una base de datos;
-- recuperar la última medición;
-- recuperar las mediciones almacenadas;
-- mostrar la última medición en una interfaz web.
-
-Cada medición contiene:
-
-- tipo de contaminante (`CO2`, `TEMP` o `RUIDO`);
-- valor de la medición;
-- latitud;
-- longitud;
-- fecha y hora (ISO 8601).
+En el Sprint 0 el sensor es ficticio: la placa emite un valor fijo que se cambia en `src/arduino/Medidor.h`.
 
 ## Arquitectura
 
-El proyecto sigue una arquitectura por capas:
+Arquitectura por capas. Cada componente tiene su diseño en `doc/` (`xxx_design.md`) y su código en `src/xxx/`:
 
-- **Base de datos** (`src/bd`): almacenamiento persistente de las mediciones en SQLite.
-- **Lógica de negocio** (`src/logica`): validación y gestión de las mediciones.
-- **API REST** (`src/rest`): comunicación entre los clientes y la lógica de negocio, con HTTP y JSON.
-- **Lógica fake en teléfono y navegador**: permite desarrollar las interfaces sin depender del backend real.
-- **UX web**: muestra las mediciones al usuario.
+| Componente | Diseño | Código | Qué hace |
+|---|---|---|---|
+| Base de datos | `doc/database_design.md` | `src/database/` | Tabla `MEDICIONES` en SQLite y acceso a ella |
+| Lógica de negocio | `doc/business_logic_design.md` | `src/business_logic/` | Valida y gestiona las mediciones. No conoce la comunicación |
+| Comunicación | `doc/communication_design.md` | `src/communication/` | API REST (HTTP y JSON) que invoca a la lógica de negocio y sirve la web |
+| Lógica de negocio del cliente | `doc/frontend_business_logic_design.md` | `src/frontend_business_logic/` | Misma interfaz que la lógica de negocio, como proxy real del servidor o como fake |
+| Interfaz web | `doc/gui_design.md` | `src/gui/` | Pantalla "Última medición" |
+| App Android | `doc/android_design.md` | `src/android/MedicionesApp/` | Escucha los iBeacon de la placa y envía las mediciones al servidor |
+| Placa Arduino | `doc/arduino_design.md` | `src/arduino/` | Emite la medida ficticia como iBeacon |
 
-Cada capa solo conoce a la siguiente: el REST no accede a la base de datos y la lógica no contiene HTTP ni JSON. La lógica recibe el repositorio por el constructor y el REST recibe la lógica por el constructor, por lo que se pueden sustituir por versiones simuladas en los tests.
+Dependencias: `communication` → `business_logic` → `database`. La interfaz web solo usa `frontend_business_logic` y nunca se comunica directamente con el servidor.
 
 ## Requisitos
 
-- [Node.js](https://nodejs.org) (versión LTS) y npm.
+- [Node.js](https://nodejs.org) (versión LTS) y npm, para el servidor y la web.
+- Android Studio y un móvil Android con Bluetooth LE, para la app.
+- Arduino IDE con el soporte de la placa nRF52840 (Adafruit nRF52), para la placa.
 
-## Despliegue
+## Despliegue y ejecución
+
+### Servidor y web
 
 ```bash
 git clone https://github.com/juliabeltr/proyecto-biometria-medioambiente-sprint0.git
 cd proyecto-biometria-medioambiente-sprint0
 git checkout develop
 npm install
-node src/rest/index.js
+npm run servidor
 ```
 
-El servidor escucha en el puerto 8080 y crea el fichero de base de datos `mediciones.sqlite` en la carpeta desde la que se arranca. Se pueden cambiar con variables de entorno:
+El servidor escucha en el puerto 8080 y crea la base de datos `mediciones.sqlite` en la carpeta desde la que se arranca. Se puede cambiar con variables de entorno:
 
 | Variable | Significado | Valor por defecto |
 |---|---|---|
 | `PORT` | Puerto del servidor | `8080` |
 | `DB_PATH` | Ruta del fichero SQLite | `mediciones.sqlite` |
 
-## API REST
+La web se abre en **http://localhost:8080/gui/** y muestra la última medición; el botón "Actualizar" vuelve a consultarla.
+
+### API REST
 
 | Ruta | Descripción | Respuestas |
 |---|---|---|
@@ -69,17 +69,25 @@ El servidor escucha en el puerto 8080 y crea el fichero de base de datos `medici
 | `GET /mediciones` | Devuelve todas las mediciones | 200, 500 |
 | `GET /mediciones/ultima` | Devuelve la última medición | 200, 404, 500 |
 
-Ejemplo:
-
 ```bash
-curl -X POST http://localhost:8080/mediciones \
-  -H "Content-Type: application/json" \
+curl -X POST http://localhost:8080/mediciones -H "Content-Type: application/json" \
   -d '{"tipo":"CO2","valor":235,"latitud":38.96,"longitud":-0.18,"fechaHora":"2026-10-02T10:00:00Z"}'
-
 curl http://localhost:8080/mediciones/ultima
 ```
 
-El detalle de cada ruta está en `doc/rest_design.md`.
+El detalle está en `doc/communication_design.md`.
+
+### App Android
+
+1. Abre `src/android/MedicionesApp` en Android Studio y conecta el móvil con la depuración USB activada.
+2. Ejecuta la app. Escribe en ella la dirección del servidor, con la IP del ordenador en la wifi (por ejemplo `http://192.168.1.35:8080`), y pulsa "Iniciar escucha".
+3. El móvil y el ordenador deben estar en la misma red.
+
+### Placa Arduino
+
+1. Abre `src/arduino/arduino.ino` en el Arduino IDE (los ficheros `.h` aparecen como pestañas) y elige la placa y el puerto.
+2. La medida ficticia se cambia en `src/arduino/Medidor.h` (`medirCO2()` y `medirTemperatura()`).
+3. Sube el código y abre el Monitor Serie a 115200 baudios: la placa no empieza a emitir hasta que se abre.
 
 ## Tests
 
@@ -87,11 +95,18 @@ El detalle de cada ruta está en `doc/rest_design.md`.
 npm test
 ```
 
-Ejecuta los tests automáticos de los tres componentes del servidor con Jest:
+Ejecuta con Jest los tests automáticos de los cinco componentes del servidor y la web (`database`, `business_logic`, `communication`, `frontend_business_logic` y `gui`). Cada componente se prueba aislado, sustituyendo el siguiente por una versión simulada.
 
-- `src/bd`: base de datos en memoria.
-- `src/logica`: repositorio simulado.
-- `src/rest`: lógica simulada y Supertest.
+La app Android tiene tests JUnit en `src/android/MedicionesApp/app/src/test` (clic derecho sobre la carpeta `test` en Android Studio → Run Tests). El código de la placa no tiene tests automáticos: se comprueba compilando en el Arduino IDE y con la prueba completa.
+
+### Criterio de aceptación del Sprint 0 (reproducible)
+
+1. Arrancar el servidor y abrir la web: sin datos muestra "Todavía no hay mediciones".
+2. Poner un valor ficticio en `Medidor.h` (por ejemplo 412), cargarlo en la placa y abrir la app con "Iniciar escucha".
+3. En unos segundos la app muestra "CO2 = 412 enviada" y, al pulsar "Actualizar", la web muestra CO2 con valor 412.
+4. La medición aparece como una fila nueva de la tabla `MEDICIONES` en `mediciones.sqlite`.
+
+La hora de la web está en la zona horaria del navegador y la base de datos guarda UTC; por eso pueden diferir en horas.
 
 ## Estructura del repositorio
 
@@ -99,28 +114,21 @@ Ejecuta los tests automáticos de los tres componentes del servidor con Jest:
 author.md
 README.md
 package.json
-codigo_original/        código proporcionado (Arduino, Android y web)
-codigo_mejorado/        código original con mejoras
-doc/
-├── bd_design.md        diseño del componente bd
-├── logica_design.md    diseño del componente logica
-├── rest_design.md      diseño del componente rest
-├── diseno_logico/      planos de ingeniería inversa
-└── errores_y_mejoras/
-prompts/                prompts usados con la IA para generar el código
-src/
-├── bd/
-├── logica/
-└── rest/
+doc/          diseños (xxx_design.md) en la notación de la asignatura
+src/          código generado a partir de los diseños, un directorio por componente
+prompts/      prompts usados con la IA para generar el código
 ```
 
-## Diseño y uso de IA
+Las ramas son `develop` (trabajo) y `master` (versiones estables).
 
-Los diseños de cada componente están en `doc/`, con la notación lógica de la asignatura. El código de `src/` se ha generado con IA a partir de esos diseños y de los prompts guardados en `prompts/`, y se ha revisado comprobando que cumple el diseño y que los tests pasan.
+## Uso de IA
+
+El código de `src/` se ha generado con IA a partir de los diseños de `doc/`, con los prompts de `prompts/`. Después se ha revisado que cumple el diseño (métodos y nombres, cabeceras con el diseño lógico, separación de capas) y que los tests pasan.
 
 ## Estado del Sprint 0
 
 - [x] Base de datos, lógica de negocio y API REST, con tests
-- [ ] Lógica fake del navegador y UX web
-- [ ] Lógica fake del teléfono y conexión Android → REST
-- [ ] Prueba completa Arduino → Android → REST → BD → web
+- [x] Lógica de negocio del cliente (real y fake) y web, con tests
+- [x] App Android: conversión de la trama iBeacon, envío al servidor y tests JUnit
+- [x] Código Arduino adaptado para emitir la medida ficticia
+- [ ] Prueba completa placa → móvil → servidor → web

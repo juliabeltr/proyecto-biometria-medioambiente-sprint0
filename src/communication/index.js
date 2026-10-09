@@ -2,7 +2,7 @@
 // index.js
 //
 // Descripción: punto de arranque del servidor REST. Solo monta los
-//              componentes bd, logica y rest, indica la carpeta de la
+//              componentes database, business_logic y communication, indica la carpeta de la
 //              interfaz web y escucha peticiones.
 // Autor:       Júlia Beltrán Girbés
 // Fecha:       2026
@@ -12,8 +12,8 @@
 // =============================================================================
 
 const path = require("path");
-const RepositorioMediciones = require("../bd/repositorioMediciones");
-const LogicaMediciones = require("../logica/logicaMediciones");
+const RepositorioMediciones = require("../database/repositorioMediciones");
+const LogicaMediciones = require("../business_logic/logicaMediciones");
 const ServidorREST = require("./servidorREST");
 
 const puerto = process.env.PORT || 8080;
@@ -26,5 +26,5 @@ const servidor = new ServidorREST(logica, rutaWeb);
 
 servidor.app.listen(puerto, () => {
     console.log(`Servidor REST escuchando en el puerto ${puerto}`);
-    console.log(`Interfaz web en http://localhost:${puerto}/ux/`);
+    console.log(`Interfaz web en http://localhost:${puerto}/gui/`);
 });

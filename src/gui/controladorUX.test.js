@@ -5,11 +5,11 @@
 // =============================================================================
 // controladorUX.test.js
 //
-// Descripción: tests automáticos del componente ux (ControladorUX).
+// Descripción: tests automáticos del componente gui (ControladorUX).
 // Autor:       Júlia Beltrán Girbés
 // Fecha:       2026
 // Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
-// Aportación:  Casos pedidos en doc/ux_design.md, con la lógica fake y el
+// Aportación:  Casos pedidos en doc/gui_design.md, con la lógica fake y el
 //              index.html real cargado en jsdom (zona horaria fijada en UTC
 //              por jest.global-setup.js).
 // =============================================================================
@@ -17,7 +17,7 @@
 const fs = require("fs");
 const path = require("path");
 const ControladorUX = require("./controladorUX");
-const LogicaNavegadorFake = require("../navegador_fake/logicaNavegadorFake");
+const LogicaNavegadorFake = require("../frontend_business_logic/logicaNavegadorFake");
 
 /*
  * --------------------------------------------------------------

@@ -1,11 +1,11 @@
 // =============================================================================
 // repositorioMediciones.js
 //
-// Descripción: acceso a la base de datos SQLite de mediciones (componente bd).
+// Descripción: acceso a la base de datos SQLite de mediciones (componente database).
 // Autor:       Júlia Beltrán Girbés
 // Fecha:       02/10/2026
 // Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
-// Aportación:  Implementación de doc/bd_design.md. Solo guarda y recupera
+// Aportación:  Implementación de doc/database_design.md. Solo guarda y recupera
 //              datos: no valida reglas de negocio ni contiene HTTP o JSON.
 // =============================================================================
 

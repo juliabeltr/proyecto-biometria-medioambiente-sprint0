@@ -1,12 +1,12 @@
 // =============================================================================
 // logicaNavegadorFake.js
 //
-// Descripción: lógica fake del navegador (componente navegador_fake). Simula
+// Descripción: lógica fake del navegador (componente frontend_business_logic). Simula
 //              a la lógica real para desarrollar la interfaz sin servidor.
 // Autor:       Júlia Beltrán Girbés
 // Fecha:       2026
 // Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
-// Aportación:  Implementación de doc/navegador_fake_design.md. No hace
+// Aportación:  Implementación de doc/frontend_business_logic_design.md. No hace
 //              peticiones, no accede al DOM y no contiene HTML. Sus
 //              operaciones son asíncronas, como las de la lógica real.
 // =============================================================================

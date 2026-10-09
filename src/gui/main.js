@@ -7,9 +7,9 @@
 // Fecha:       2026
 // Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
 // Aportación:  Usa la lógica real del navegador, que llama al servidor desde
-//              el que se cargó la página (abrir http://localhost:8080/ux/).
+//              el que se cargó la página (abrir http://localhost:8080/gui/).
 //              Para desarrollar sin servidor basta cargar en index.html
-//              ../navegador_fake/logicaNavegadorFake.js y usar aquí
+//              ../frontend_business_logic/logicaNavegadorFake.js y usar aquí
 //              new LogicaNavegadorFake(): tiene la misma interfaz.
 // =============================================================================
 

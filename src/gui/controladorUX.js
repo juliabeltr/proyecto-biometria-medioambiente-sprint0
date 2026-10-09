@@ -1,11 +1,11 @@
 // =============================================================================
 // controladorUX.js
 //
-// Descripción: controlador de la pantalla "Última medición" (componente ux).
+// Descripción: controlador de la pantalla "Última medición" (componente gui).
 // Autor:       Júlia Beltrán Girbés
 // Fecha:       2026
 // Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
-// Aportación:  Implementación de doc/ux_design.md. Obtiene los datos solo a
+// Aportación:  Implementación de doc/gui_design.md. Obtiene los datos solo a
 //              través de LogicaNavegador (fake o real, misma interfaz). No
 //              hace peticiones HTTP ni contiene lógica de negocio.
 // =============================================================================

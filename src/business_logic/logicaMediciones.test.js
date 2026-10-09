@@ -1,11 +1,11 @@
 // =============================================================================
 // logicaMediciones.test.js
 //
-// Descripción: tests automáticos del componente logica (LogicaMediciones).
+// Descripción: tests automáticos del componente business_logic (LogicaMediciones).
 // Autor:       Júlia Beltrán Girbés
 // Fecha:       2026
 // Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
-// Aportación:  Casos pedidos en doc/logica_design.md, con un repositorio
+// Aportación:  Casos pedidos en doc/business_logic_design.md, con un repositorio
 //              simulado (sin base de datos real).
 // =============================================================================
 

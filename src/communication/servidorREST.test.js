@@ -1,11 +1,11 @@
 // =============================================================================
 // servidorREST.test.js
 //
-// Descripción: tests automáticos del componente rest (ServidorREST).
+// Descripción: tests automáticos del componente communication (ServidorREST).
 // Autor:       Júlia Beltrán Girbés
 // Fecha:       2026
 // Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
-// Aportación:  Casos pedidos en doc/rest_design.md, con una lógica simulada
+// Aportación:  Casos pedidos en doc/communication_design.md, con una lógica simulada
 //              (sin base de datos real) y Supertest. Incluye los ficheros
 //              estáticos de la interfaz web.
 // =============================================================================
@@ -216,8 +216,8 @@ describe("ServidorREST", () => {
             appConWeb = new ServidorREST(logica, rutaWeb).app;
         });
 
-        test("con rutaWeb, GET /ux/ devuelve la página index.html", async () => {
-            const respuesta = await request(appConWeb).get("/ux/");
+        test("con rutaWeb, GET /gui/ devuelve la página index.html", async () => {
+            const respuesta = await request(appConWeb).get("/gui/");
 
             expect(respuesta.status).toBe(200);
             expect(respuesta.headers["content-type"]).toContain("text/html");
@@ -226,10 +226,10 @@ describe("ServidorREST", () => {
 
         test("con rutaWeb, se sirven los ficheros de la interfaz y de la lógica del navegador", async () => {
             for (const ruta of [
-                "/ux/controladorUX.js",
-                "/ux/estilos.css",
-                "/navegador/logicaNavegador.js",
-                "/navegador_fake/logicaNavegadorFake.js",
+                "/gui/controladorUX.js",
+                "/gui/estilos.css",
+                "/frontend_business_logic/logicaNavegador.js",
+                "/frontend_business_logic/logicaNavegadorFake.js",
             ]) {
                 const respuesta = await request(appConWeb).get(ruta);
 
@@ -238,10 +238,10 @@ describe("ServidorREST", () => {
         });
 
         test.each([
-            "/bd/repositorioMediciones.js",
-            "/logica/logicaMediciones.js",
-            "/rest/servidorREST.js",
-            "/rest/index.js",
+            "/database/repositorioMediciones.js",
+            "/business_logic/logicaMediciones.js",
+            "/communication/servidorREST.js",
+            "/communication/index.js",
         ])("con rutaWeb, NO se sirve el código del servidor: %s", async (ruta) => {
             const respuesta = await request(appConWeb).get(ruta);
 
@@ -250,14 +250,14 @@ describe("ServidorREST", () => {
         });
 
         test("con rutaWeb, no se puede salir de las carpetas servidas", async () => {
-            const respuesta = await request(appConWeb).get("/ux/%2e%2e/bd/repositorioMediciones.js");
+            const respuesta = await request(appConWeb).get("/gui/%2e%2e/database/repositorioMediciones.js");
 
             expect(respuesta.status).not.toBe(200);
             expect(respuesta.text).not.toContain("better-sqlite3");
         });
 
-        test("sin rutaWeb, GET /ux/ devuelve 404", async () => {
-            const respuesta = await request(app).get("/ux/");
+        test("sin rutaWeb, GET /gui/ devuelve 404", async () => {
+            const respuesta = await request(app).get("/gui/");
 
             expect(respuesta.status).toBe(404);
         });

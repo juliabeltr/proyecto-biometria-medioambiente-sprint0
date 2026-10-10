@@ -146,25 +146,28 @@ Flujo: `Medidor` → `Publicador` → `EmisoraBLE` → anuncio BLE → teléfono
 ### ServicioEnEmisora y Caracteristica
 
 ```text
-                         --------- ServicioEnEmisora --------------------
-                         |
-                         |  uuidServicio: [N]_16
-                         |  elServicio: BLEService
-                         |  lasCaracteristicas: [Caracteristica]
-                         |
-                         |
-                         ServicioEnEmisora() -->
-                         |
-                         |
-                         escribeUUID() -->
-                         |
-                         |
- car: Caracteristica --> anyadirCaracteristica() -->
-                         |
-                         |
-                         activarServicio() -->
-                         |
-                         ------------------------------------------------
+                          --------- ServicioEnEmisora --------------------
+                          |
+                          |  uuidServicio: [N]_16
+                          |  elServicio: BLEService
+                          |  lasCaracteristicas: [Caracteristica]
+                          |
+                          |
+                          ServicioEnEmisora() -->
+                          |
+                          |
+                          escribeUUID() -->
+                          |
+                          |
+  car: Caracteristica --> anyadirCaracteristica() -->
+                          |
+                          |
+                          activarServicio() -->
+                          |
+                          |
+ servicio: BLEService <-- operator BLEService() <--
+                          |
+                          ------------------------------------------------
 
                                                                                           --------- Caracteristica -----------------------
                                                                                           |
@@ -278,6 +281,7 @@ La clase `Caracteristica` pertenece a `ServicioEnEmisora` (un servicio contiene 
 - `EmisoraBLE.emitirAnuncioIBeacon()` detiene antes cualquier anuncio activo. `emitirAnuncioIBeaconLibre()` copia como máximo 21 caracteres de la carga.
 - `EmisoraBLE.encenderEmisora()` inicializa Bluefruit y se asegura de que no haya ningún anuncio activo. Existe una variante que además instala los callbacks de conexión; en el diseño lógico los callbacks se omiten, por lo que ambas variantes tienen la misma firma.
 - `Publicador` expone la constante pública `RSSI` (-53) y los valores de `MedicionesID`.
+- `operator BLEService&()` de `ServicioEnEmisora` permite usar el servicio allí donde la biblioteca Bluefruit necesita un `BLEService`.
 - `esperar()` bloquea la ejecución durante el tiempo indicado.
 - `alReves()`, `stringAUint8AlReves()` y `calcularMajor()` son funciones puras, sin dependencia de Arduino, y están en `Utilidades.h`. `calcularMajor()` devuelve `tipo * 256 + contador`, el campo major del iBeacon.
 - `ServicioEnEmisora` y `Caracteristica` permiten definir servicios y características GATT. El programa principal del Sprint 0 no los utiliza: emite solo anuncios iBeacon.

@@ -43,7 +43,14 @@ public class MainActivity extends AppCompatActivity {
     private EscanerBeacons escaner = null;
 
     /*
-     * Método ejecutado al crear la actividad: enlaza la pantalla y los botones.
+     * --------------------------------------------------------------
+     * Propósito: método ejecutado al crear la actividad: enlaza la pantalla y los botones.
+     *
+     * Diseño lógico:
+     *     onCreate() -->
+     *
+     * Es mecánica de Android (ciclo de vida de la actividad): queda fuera del diseño lógico.
+     * --------------------------------------------------------------
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,8 +168,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*
-     * Respuesta del usuario a la petición de permisos: si los concede todos,
-     * arranca el escaneo; si no, lo indica en pantalla.
+     * --------------------------------------------------------------
+     * Propósito: respuesta del usuario a la petición de permisos: si los concede
+     *            todos, arranca el escaneo; si no, lo indica en pantalla.
+     *
+     * Diseño lógico:
+     *     onRequestPermissionsResult() -->
+     *
+     * Es mecánica de Android (ciclo de vida de la actividad): queda fuera del diseño lógico.
+     * --------------------------------------------------------------
      */
     @Override
     public void onRequestPermissionsResult(int codigo, String[] permisos, int[] resultados) {
@@ -178,7 +192,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*
-     * Al destruir la actividad se detiene el escaneo para no dejarlo activo.
+     * --------------------------------------------------------------
+     * Propósito: al destruir la actividad se detiene el escaneo para no dejarlo activo.
+     *
+     * Diseño lógico:
+     *     onDestroy() -->
+     *
+     * Es mecánica de Android (ciclo de vida de la actividad): queda fuera del diseño lógico.
+     * --------------------------------------------------------------
      */
     @Override
     protected void onDestroy() {
@@ -271,7 +292,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*
-     * Muestra el estado de la escucha en pantalla.
+     * --------------------------------------------------------------
+     * Propósito: muestra el estado de la escucha en pantalla.
+     *
+     * Diseño lógico:
+     *     estado: Text --> mostrarEstado() -->
+     * --------------------------------------------------------------
      */
     private void mostrarEstado(String estado) {
         textoEstado.setText(estado);

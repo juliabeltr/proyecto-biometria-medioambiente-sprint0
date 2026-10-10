@@ -408,6 +408,11 @@ public:
    * Propósito: Añade un servicio BLE sin características adicionales.
    *
    * Retorno: Resultado de añadir el servicio.
+   *
+   * Diseño lógico:
+   *     servicio: ServicioEnEmisora, caracteristicas: [Caracteristica]
+   *         --> anyadirServicioConSusCaracteristicas() -->
+   *         B <--
    * --------------------------------------------------------------
    */
   bool anyadirServicioConSusCaracteristicas(
@@ -421,6 +426,11 @@ public:
   /*
    * --------------------------------------------------------------
    * Propósito: Añade características a un servicio de forma recursiva.
+   *
+   * Diseño lógico:
+   *     servicio: ServicioEnEmisora, caracteristicas: [Caracteristica]
+   *         --> anyadirServicioConSusCaracteristicas() -->
+   *         B <--
    * --------------------------------------------------------------
    */
   template <typename ... T>
@@ -443,6 +453,11 @@ public:
   /*
    * --------------------------------------------------------------
    * Propósito: Añade las características y posteriormente activa el servicio.
+   *
+   * Diseño lógico:
+   *     servicio: ServicioEnEmisora, caracteristicas: [Caracteristica]
+   *         --> anyadirServicioConSusCaracteristicasYActivar() -->
+   *         B <--
    * --------------------------------------------------------------
    */
   template <typename ... T>
@@ -465,6 +480,9 @@ public:
   /*
    * --------------------------------------------------------------
    * Propósito: Instala el callback ejecutado al establecer una conexión BLE.
+   *
+   * Diseño lógico:
+   *     instalarCallbackConexionEstablecida() -->
    * --------------------------------------------------------------
    */
   void instalarCallbackConexionEstablecida(
@@ -478,6 +496,9 @@ public:
   /*
    * --------------------------------------------------------------
    * Propósito: Instala el callback ejecutado al terminar una conexión BLE.
+   *
+   * Diseño lógico:
+   *     instalarCallbackConexionTerminada() -->
    * --------------------------------------------------------------
    */
   void instalarCallbackConexionTerminada(
@@ -496,6 +517,10 @@ public:
    * Retorno: Puntero a la conexión BLE correspondiente.
    *
    * Nota: El resultado podría ser nulo si la conexión no existe.
+   *
+   * Diseño lógico:
+   *     conn_handle: N --> getConexion() -->
+   *         conexion: Conexion <--
    * --------------------------------------------------------------
    */
   BLEConnection * getConexion(

@@ -140,6 +140,9 @@ public:
      *
      * Por ejemplo:
      * CHR_PROPS_WRITE, CHR_PROPS_READ o CHR_PROPS_NOTIFY.
+     *
+     * Diseño lógico:
+     *     props: Z --> asignarPropiedades() -->
      * --------------------------------------------------------------
      */
     void asignarPropiedades(
@@ -154,6 +157,9 @@ public:
     /*
      * --------------------------------------------------------------
      * Propósito: Configura los permisos de lectura y escritura.
+     *
+     * Diseño lógico:
+     *     permisoRead: Text, permisoWrite: Text --> asignarPermisos() -->
      * --------------------------------------------------------------
      */
     void asignarPermisos(
@@ -173,6 +179,9 @@ public:
      * de la característica.
      *
      * Parámetro: tam Tamaño máximo permitido.
+     *
+     * Diseño lógico:
+     *     tam: Z --> asignarTamanyoDatos() -->
      * --------------------------------------------------------------
      */
     void asignarTamanyoDatos(
@@ -190,6 +199,10 @@ public:
      * --------------------------------------------------------------
      * Propósito: Configura propiedades, permisos y tamaño
      * de los datos de una característica.
+     *
+     * Diseño lógico:
+     *     props: Z, permisoRead: Text, permisoWrite: Text, tam: Z
+     *         --> asignarPropiedadesPermisosYTamanyoDatos() -->
      * --------------------------------------------------------------
      */
     void asignarPropiedadesPermisosYTamanyoDatos(
@@ -269,6 +282,9 @@ public:
      * --------------------------------------------------------------
      * Propósito: Instala el callback que se ejecutará cuando
      * se escriba en la característica.
+     *
+     * Diseño lógico:
+     *     instalarCallbackCaracteristicaEscrita() -->
      * --------------------------------------------------------------
      */
     void instalarCallbackCaracteristicaEscrita(
@@ -286,6 +302,9 @@ public:
      *
      * Llama a begin() sobre la característica e informa
      * del código de error mediante el puerto serie.
+     *
+     * Diseño lógico:
+     *     activar() -->
      * --------------------------------------------------------------
      */
     void activar() {
@@ -364,6 +383,9 @@ public:
    * Propósito: Escribe el UUID del servicio por el puerto serie.
    *
    * Método de apoyo para depuración.
+   *
+   * Diseño lógico:
+   *     escribeUUID() -->
    * --------------------------------------------------------------
    */
   void escribeUUID() {
@@ -444,6 +466,9 @@ public:
    * la biblioteca necesite un BLEService.
    *
    * Retorno: Referencia al servicio BLE interno.
+   *
+   * Diseño lógico:
+   *     servicio: BLEService <-- operator BLEService() <--
    * --------------------------------------------------------------
    */
   operator BLEService&() {

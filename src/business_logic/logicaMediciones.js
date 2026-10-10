@@ -136,7 +136,8 @@ class LogicaMediciones {
  * Propósito: indica si un dato es un número real finito.
  *
  * Diseño lógico:
- *     x: Text --> esNumeroFinito() --> B
+ *     x: R --> esNumeroFinito() -->
+ *     resultado: B <--
  * --------------------------------------------------------------
  */
 function esNumeroFinito(x) {

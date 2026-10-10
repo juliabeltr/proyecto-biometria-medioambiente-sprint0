@@ -111,7 +111,10 @@ public class PeticionarioREST extends AsyncTask<Void, Void, Boolean> {
 
     /*
      * --------------------------------------------------------------
-     * Constructor.
+     * Propósito: constructor sin parámetros del peticionario.
+     *
+     * Diseño lógico:
+     *     PeticionarioREST() -->
      * --------------------------------------------------------------
      */
     public PeticionarioREST() {

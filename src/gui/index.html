@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!--
+  index.html
+  Descripción: pantalla única "Última medición" (componente gui).
+  Autor:       Júlia Beltrán Girbés
+  Fecha:       2026
+  Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
+  Aportación:  Estructura de doc/gui_design.md. Solo contiene marcado: la
+               lógica está en controladorUX.js y los estilos en estilos.css.
+-->
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Calidad del aire - Última medición</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <main class="pantalla">
+        <h1>Calidad del aire</h1>
+
+        <p id="mensaje-estado" class="estado" role="status" aria-live="polite"></p>
+
+        <section id="tarjeta-medicion" class="tarjeta" aria-label="Última medición" hidden>
+            <h2 class="tarjeta__titulo">Última medición</h2>
+            <dl class="tarjeta__datos">
+                <div class="dato">
+                    <dt>Contaminante</dt>
+                    <dd id="dato-tipo"></dd>
+                </div>
+                <div class="dato">
+                    <dt>Valor</dt>
+                    <dd id="dato-valor" class="dato__valor"></dd>
+                </div>
+                <div class="dato">
+                    <dt>Fecha</dt>
+                    <dd id="dato-fecha"></dd>
+                </div>
+                <div class="dato">
+                    <dt>Hora</dt>
+                    <dd id="dato-hora"></dd>
+                </div>
+            </dl>
+        </section>
+
+        <button id="boton-actualizar" class="boton" type="button">Actualizar</button>
+    </main>
+
+    <script src="../frontend_business_logic/logicaNavegador.js"></script>
+    <script src="controladorUX.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

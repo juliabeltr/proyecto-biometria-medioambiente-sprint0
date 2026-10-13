@@ -22,10 +22,10 @@ const LogicaMediciones = require("./logicaMediciones");
  */
 function medicionDePrueba(cambios = {}) {
     return {
+        sensorId: "AA:BB:CC:DD:EE:01",
         tipo: "CO2",
         valor: 412.5,
-        latitud: 38.96,
-        longitud: -0.18,
+        ubicacion: { latitud: 38.96, longitud: -0.18 },
         fechaHora: "2026-10-02T10:00:00Z",
         ...cambios,
     };
@@ -42,7 +42,7 @@ function medicionDePrueba(cambios = {}) {
  */
 function repositorioSimulado() {
     return {
-        insertar: jest.fn().mockReturnValue(1),
+        insertar: jest.fn().mockReturnValue(true),
         recuperarUltima: jest.fn().mockReturnValue(null),
         recuperarTodas: jest.fn().mockReturnValue([]),
     };
@@ -68,17 +68,17 @@ describe("LogicaMediciones", () => {
             expect(logica.guardarMedicion(medicionDePrueba({ tipo }))).toBe(true);
         });
 
-        test("ignora el id recibido y no lo pasa a la capa de datos", () => {
-            logica.guardarMedicion(medicionDePrueba({ id: 999 }));
+        test("devuelve false si la capa de datos indica que la medición ya existía", () => {
+            repositorio.insertar.mockReturnValue(false);
 
-            expect(repositorio.insertar.mock.calls[0][0]).not.toHaveProperty("id");
+            expect(logica.guardarMedicion(medicionDePrueba())).toBe(false);
         });
 
         test.each([
-            ["latitud -90", { latitud: -90 }],
-            ["latitud 90", { latitud: 90 }],
-            ["longitud -180", { longitud: -180 }],
-            ["longitud 180", { longitud: 180 }],
+            ["latitud -90", { ubicacion: { latitud: -90, longitud: 0 } }],
+            ["latitud 90", { ubicacion: { latitud: 90, longitud: 0 } }],
+            ["longitud -180", { ubicacion: { latitud: 0, longitud: -180 } }],
+            ["longitud 180", { ubicacion: { latitud: 0, longitud: 180 } }],
         ])("acepta el límite exacto: %s", (_nombre, cambios) => {
             expect(logica.guardarMedicion(medicionDePrueba(cambios))).toBe(true);
         });
@@ -95,16 +95,23 @@ describe("LogicaMediciones", () => {
 
     describe("guardarMedicion() con datos inválidos", () => {
         test.each([
+            ["sensorId vacío", { sensorId: "" }],
+            ["sensorId solo espacios", { sensorId: "   " }],
+            ["sensorId no textual", { sensorId: 12 }],
             ["tipo desconocido", { tipo: "OZONO" }],
             ["tipo en minúsculas", { tipo: "co2" }],
             ["valor no numérico", { valor: "412" }],
             ["valor NaN", { valor: NaN }],
             ["valor infinito", { valor: Infinity }],
-            ["latitud menor que -90", { latitud: -90.1 }],
-            ["latitud mayor que 90", { latitud: 90.1 }],
-            ["longitud menor que -180", { longitud: -180.1 }],
-            ["longitud mayor que 180", { longitud: 180.1 }],
-            ["latitud no numérica", { latitud: "38.9" }],
+            ["latitud menor que -90", { ubicacion: { latitud: -90.1, longitud: 0 } }],
+            ["latitud mayor que 90", { ubicacion: { latitud: 90.1, longitud: 0 } }],
+            ["longitud menor que -180", { ubicacion: { latitud: 0, longitud: -180.1 } }],
+            ["longitud mayor que 180", { ubicacion: { latitud: 0, longitud: 180.1 } }],
+            ["latitud no numérica", { ubicacion: { latitud: "38.9", longitud: 0 } }],
+            ["ubicación sin latitud", { ubicacion: { longitud: 0 } }],
+            ["ubicación sin longitud", { ubicacion: { latitud: 0 } }],
+            ["ubicación nula", { ubicacion: null }],
+            ["ubicación no es un punto", { ubicacion: "38.9,-0.18" }],
             ["fecha con texto cualquiera", { fechaHora: "ayer" }],
             ["fecha sin hora", { fechaHora: "2026-10-02" }],
             ["fecha sin formato ISO", { fechaHora: "2026-10-02 10:00:00" }],
@@ -118,7 +125,7 @@ describe("LogicaMediciones", () => {
             expect(repositorio.insertar).not.toHaveBeenCalled();
         });
 
-        test.each(["tipo", "valor", "latitud", "longitud", "fechaHora"])(
+        test.each(["sensorId", "tipo", "valor", "ubicacion", "fechaHora"])(
             "devuelve false si falta el campo %s",
             (campo) => {
                 const medicion = medicionDePrueba();
@@ -140,7 +147,7 @@ describe("LogicaMediciones", () => {
 
     describe("recuperarUltimaMedicion()", () => {
         test("devuelve la última medición", () => {
-            const ultima = { id: 7, ...medicionDePrueba() };
+            const ultima = medicionDePrueba();
             repositorio.recuperarUltima.mockReturnValue(ultima);
 
             expect(logica.recuperarUltimaMedicion()).toEqual(ultima);
@@ -154,8 +161,8 @@ describe("LogicaMediciones", () => {
     describe("recuperarMediciones()", () => {
         test("devuelve varias mediciones", () => {
             const todas = [
-                { id: 1, ...medicionDePrueba() },
-                { id: 2, ...medicionDePrueba({ tipo: "TEMP", valor: 21 }) },
+                medicionDePrueba(),
+                medicionDePrueba({ tipo: "TEMP", valor: 21 }),
             ];
             repositorio.recuperarTodas.mockReturnValue(todas);
 

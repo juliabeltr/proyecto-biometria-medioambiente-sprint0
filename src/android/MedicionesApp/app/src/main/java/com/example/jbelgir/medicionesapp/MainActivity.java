@@ -30,8 +30,7 @@ import java.time.temporal.ChronoUnit;
 public class MainActivity extends AppCompatActivity {
 
     // Ubicación fija del Sprint 0 (el GPS real queda para un sprint posterior).
-    private static final double LATITUD_PRUEBAS = 38.9675;
-    private static final double LONGITUD_PRUEBAS = -0.1806;
+    private static final Punto UBICACION_PRUEBAS = new Punto(38.9675, -0.1806);
 
     private static final int CODIGO_PETICION_PERMISOS = 1001;
 
@@ -99,8 +98,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         LogicaTelefono logica = logicaConAviso(new LogicaTelefonoREST(urlServidor));
-        procesador = new ProcesadorBeacons(logica, LATITUD_PRUEBAS, LONGITUD_PRUEBAS);
-        escaner = new EscanerBeacons(bytes -> procesador.procesar(bytes, ahoraUTC()));
+        procesador = new ProcesadorBeacons(logica, UBICACION_PRUEBAS);
+        escaner = new EscanerBeacons((bytes, sensorId) -> procesador.procesar(bytes, sensorId, ahoraUTC()));
         escaner.iniciarEscaneo();
 
         if (escaner.estaEscaneando()) {

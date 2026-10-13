@@ -43,11 +43,10 @@ function cargarPantalla() {
  */
 function medicionDePrueba(cambios = {}) {
     return {
-        id: 1,
+        sensorId: "AA:BB:CC:DD:EE:01",
         tipo: "CO2",
         valor: 412,
-        latitud: 38.96,
-        longitud: -0.18,
+        ubicacion: { latitud: 38.96, longitud: -0.18 },
         fechaHora: "2026-10-02T10:05:00Z",
         ...cambios,
     };

@@ -11,7 +11,8 @@
 // =============================================================================
 
 /*
- * Medicion = ( id: N, tipo: Text, valor: R, latitud: R, longitud: R,
+ * Punto = ( latitud: R, longitud: R )
+ * Medicion = ( sensorId: Text, tipo: Text, valor: R, ubicacion: Punto,
  *              fechaHora: Text )
  * TipoMedicion = { CO2, TEMP, RUIDO }
  */
@@ -44,7 +45,8 @@ class LogicaMediciones {
     /*
      * --------------------------------------------------------------
      * Propósito: valida una medición y, si es correcta, la guarda.
-     *            El campo id recibido se ignora.
+     *            No se guarda si ya existe una medición del mismo sensor
+     *            en el mismo instante (clave primaria).
      *
      * Diseño lógico:
      *     m: Medicion --> guardarMedicion() -->
@@ -53,7 +55,8 @@ class LogicaMediciones {
      * Parámetros:
      *     m: Medicion. Medición a guardar.
      * Retorno: resultado: B. true si se ha guardado; false si los datos
-     *          no son válidos (en ese caso no se toca la capa de datos).
+     *          no son válidos (en ese caso no se toca la capa de datos) o
+     *          si la medición ya existía.
      * Errores: los de la capa de datos se propagan sin capturar.
      * --------------------------------------------------------------
      */
@@ -61,14 +64,13 @@ class LogicaMediciones {
         if (!this.#esMedicionValida(m)) {
             return false;
         }
-        this.repositorio.insertar({
+        return this.repositorio.insertar({
+            sensorId: m.sensorId,
             tipo: m.tipo,
             valor: m.valor,
-            latitud: m.latitud,
-            longitud: m.longitud,
+            ubicacion: { latitud: m.ubicacion.latitud, longitud: m.ubicacion.longitud },
             fechaHora: m.fechaHora,
         });
-        return true;
     }
 
     /*
@@ -105,8 +107,8 @@ class LogicaMediciones {
 
     /*
      * --------------------------------------------------------------
-     * Propósito: comprueba las cinco reglas de validación de una
-     *            medición (id no se comprueba: se ignora).
+     * Propósito: comprueba las reglas de validación de una medición
+     *            (id no existe: la clave es sensorId + fechaHora).
      *
      * Diseño lógico:
      *     m: Medicion --> esMedicionValida() --> B
@@ -122,13 +124,46 @@ class LogicaMediciones {
             return false;
         }
         return (
+            esTextoNoVacio(m.sensorId) &&
             TIPOS_MEDICION.includes(m.tipo) &&
             esNumeroFinito(m.valor) &&
-            esNumeroEnRango(m.latitud, -90, 90) &&
-            esNumeroEnRango(m.longitud, -180, 180) &&
+            esPuntoValido(m.ubicacion) &&
             esFechaHoraIso8601(m.fechaHora)
         );
     }
+}
+
+/*
+ * --------------------------------------------------------------
+ * Propósito: indica si un dato es un texto con algún carácter que
+ *            no sea espacio en blanco.
+ *
+ * Diseño lógico:
+ *     x: Text --> esTextoNoVacio() -->
+ *     resultado: B <--
+ * --------------------------------------------------------------
+ */
+function esTextoNoVacio(x) {
+    return typeof x === "string" && x.trim().length > 0;
+}
+
+/*
+ * --------------------------------------------------------------
+ * Propósito: indica si un dato es un Punto válido: latitud entre
+ *            -90 y 90 y longitud entre -180 y 180, ambas incluidas.
+ *
+ * Diseño lógico:
+ *     p: Punto --> esPuntoValido() -->
+ *     resultado: B <--
+ * --------------------------------------------------------------
+ */
+function esPuntoValido(p) {
+    return (
+        p !== null &&
+        typeof p === "object" &&
+        esNumeroEnRango(p.latitud, -90, 90) &&
+        esNumeroEnRango(p.longitud, -180, 180)
+    );
 }
 
 /*

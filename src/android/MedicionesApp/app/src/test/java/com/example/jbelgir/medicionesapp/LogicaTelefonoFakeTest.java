@@ -19,7 +19,7 @@ import org.junit.Test;
 public class LogicaTelefonoFakeTest {
 
     private static Medicion medicion(double valor) {
-        return new Medicion(0, "CO2", valor, 38.96, -0.18, "2026-10-03T10:00:00Z");
+        return new Medicion("AA:BB:CC:DD:EE:01", "CO2", valor, new Punto(38.96, -0.18), "2026-10-03T10:00:00Z");
     }
 
     /*

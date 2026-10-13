@@ -14,16 +14,18 @@ public interface EscuchadorBeacons {
 
     /*
      * --------------------------------------------------------------
-     * Propósito: recibe los bytes de un anuncio BLE detectado.
+     * Propósito: recibe los bytes de un anuncio BLE detectado y la
+     *            dirección Bluetooth de quien lo emite.
      *
      * Diseño lógico:
-     *     bytes: [Z] --> alRecibirAnuncio() -->
+     *     bytes: [Z], sensorId: Text --> alRecibirAnuncio() -->
      *
      * Parámetros:
      *     bytes: [Z]. Bytes del anuncio.
+     *     sensorId: Text. Dirección Bluetooth (MAC) del emisor.
      * Retorno: ninguno.
      * Errores: ninguno.
      * --------------------------------------------------------------
      */
-    void alRecibirAnuncio(byte[] bytes);
+    void alRecibirAnuncio(byte[] bytes, String sensorId);
 }

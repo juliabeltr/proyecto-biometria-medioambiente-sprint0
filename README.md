@@ -14,7 +14,7 @@ Sensor (placa Arduino) → App móvil Android → API REST → Lógica de negoci
 - Recuperar la última medición y todas las mediciones almacenadas.
 - Mostrar la última medición en una página web.
 
-Cada medición contiene: tipo de contaminante (`CO2`, `TEMP` o `RUIDO`), valor, latitud, longitud y fecha y hora (ISO 8601, en UTC).
+Cada medición contiene: identificador del sensor (`sensorId`), tipo de contaminante (`CO2`, `TEMP` o `RUIDO`), valor, ubicación (`ubicacion`, un punto con latitud y longitud) y fecha y hora (ISO 8601, en UTC). La clave primaria de la tabla es (`sensorId`, `fechaHora`). En la base de datos la ubicación es una sola columna de tipo `POINT`, guardada en formato WKT, por ejemplo `POINT(-0.1806 38.9675)` (longitud y latitud).
 
 En el Sprint 0 el sensor es ficticio: la placa emite un valor fijo que se cambia en `src/arduino/Medidor.h`.
 
@@ -59,6 +59,8 @@ El servidor escucha en el puerto 8080 y crea la base de datos `mediciones.sqlite
 | `PORT` | Puerto del servidor | `8080` |
 | `DB_PATH` | Ruta del fichero SQLite | `mediciones.sqlite` |
 
+Si existe un `mediciones.sqlite` creado con una versión anterior (otra estructura de tabla), hay que borrarlo antes de arrancar: el servidor lo vuelve a crear con la estructura actual.
+
 La web se abre en **http://localhost:8080/gui/** y muestra la última medición; el botón "Actualizar" vuelve a consultarla.
 
 ### API REST
@@ -71,7 +73,7 @@ La web se abre en **http://localhost:8080/gui/** y muestra la última medición;
 
 ```bash
 curl -X POST http://localhost:8080/mediciones -H "Content-Type: application/json" \
-  -d '{"tipo":"CO2","valor":235,"latitud":38.96,"longitud":-0.18,"fechaHora":"2026-10-02T10:00:00Z"}'
+  -d '{"sensorId":"AA:BB:CC:DD:EE:01","tipo":"CO2","valor":235,"ubicacion":{"latitud":38.96,"longitud":-0.18},"fechaHora":"2026-10-02T10:00:00Z"}'
 curl http://localhost:8080/mediciones/ultima
 ```
 

@@ -21,11 +21,10 @@ const LogicaNavegadorFake = require("./logicaNavegadorFake");
  */
 function medicionDePrueba(cambios = {}) {
     return {
-        id: 1,
+        sensorId: "AA:BB:CC:DD:EE:01",
         tipo: "CO2",
         valor: 400,
-        latitud: 38.96,
-        longitud: -0.18,
+        ubicacion: { latitud: 38.96, longitud: -0.18 },
         fechaHora: "2026-10-02T10:00:00Z",
         ...cambios,
     };
@@ -35,28 +34,28 @@ describe("LogicaNavegadorFake", () => {
     describe("recuperarUltimaMedicion()", () => {
         test("devuelve la medición de mayor fechaHora", async () => {
             const logica = new LogicaNavegadorFake([
-                medicionDePrueba({ id: 1, valor: 1, fechaHora: "2026-10-02T09:00:00Z" }),
-                medicionDePrueba({ id: 2, valor: 2, fechaHora: "2026-10-02T12:00:00Z" }),
-                medicionDePrueba({ id: 3, valor: 3, fechaHora: "2026-10-02T10:00:00Z" }),
+                medicionDePrueba({ valor: 1, fechaHora: "2026-10-02T09:00:00Z" }),
+                medicionDePrueba({ valor: 2, fechaHora: "2026-10-02T12:00:00Z" }),
+                medicionDePrueba({ valor: 3, fechaHora: "2026-10-02T10:00:00Z" }),
             ]);
 
             expect((await logica.recuperarUltimaMedicion()).valor).toBe(2);
         });
 
-        test("desempata por mayor id si la fechaHora coincide", async () => {
+        test("desempata por mayor sensorId si la fechaHora coincide", async () => {
             const logica = new LogicaNavegadorFake([
-                medicionDePrueba({ id: 5, valor: 1 }),
-                medicionDePrueba({ id: 9, valor: 2 }),
-                medicionDePrueba({ id: 7, valor: 3 }),
+                medicionDePrueba({ sensorId: "sensor-A", valor: 1 }),
+                medicionDePrueba({ sensorId: "sensor-C", valor: 2 }),
+                medicionDePrueba({ sensorId: "sensor-B", valor: 3 }),
             ]);
 
-            expect((await logica.recuperarUltimaMedicion()).id).toBe(9);
+            expect((await logica.recuperarUltimaMedicion()).sensorId).toBe("sensor-C");
         });
 
         test("compara instantes reales aunque las zonas horarias difieran", async () => {
             const logica = new LogicaNavegadorFake([
-                medicionDePrueba({ id: 1, valor: 1, fechaHora: "2026-10-02T10:00:00Z" }),
-                medicionDePrueba({ id: 2, valor: 2, fechaHora: "2026-10-02T11:30:00+02:00" }),
+                medicionDePrueba({ valor: 1, fechaHora: "2026-10-02T10:00:00Z" }),
+                medicionDePrueba({ valor: 2, fechaHora: "2026-10-02T11:30:00+02:00" }),
             ]);
 
             // 11:30+02:00 son las 09:30Z, anterior a las 10:00Z
@@ -81,7 +80,7 @@ describe("LogicaNavegadorFake", () => {
 
     describe("recuperarMediciones()", () => {
         test("devuelve varias mediciones", async () => {
-            const datos = [medicionDePrueba({ id: 1 }), medicionDePrueba({ id: 2 })];
+            const datos = [medicionDePrueba({ valor: 1 }), medicionDePrueba({ valor: 2 })];
             const logica = new LogicaNavegadorFake(datos);
 
             expect(await logica.recuperarMediciones()).toEqual(datos);
@@ -109,7 +108,7 @@ describe("LogicaNavegadorFake", () => {
 
             for (const m of await logica.recuperarMediciones()) {
                 expect(Object.keys(m).sort()).toEqual(
-                    ["fechaHora", "id", "latitud", "longitud", "tipo", "valor"]
+                    ["fechaHora", "sensorId", "tipo", "ubicacion", "valor"]
                 );
                 expect(Number.isNaN(Date.parse(m.fechaHora))).toBe(false);
             }

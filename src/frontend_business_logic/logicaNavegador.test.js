@@ -21,11 +21,10 @@ const LogicaNavegador = require("./logicaNavegador");
  */
 function medicionDePrueba() {
     return {
-        id: 3,
+        sensorId: "AA:BB:CC:DD:EE:01",
         tipo: "CO2",
         valor: 235,
-        latitud: 38.96,
-        longitud: -0.18,
+        ubicacion: { latitud: 38.96, longitud: -0.18 },
         fechaHora: "2026-10-02T10:00:00Z",
     };
 }
@@ -106,7 +105,7 @@ describe("LogicaNavegador", () => {
 
     describe("recuperarMediciones()", () => {
         test("código 200: devuelve la lista recibida", async () => {
-            const lista = [medicionDePrueba(), { ...medicionDePrueba(), id: 4 }];
+            const lista = [medicionDePrueba(), { ...medicionDePrueba(), sensorId: "sensor-2" }];
             fetch.mockResolvedValue(respuestaSimulada(200, lista));
 
             expect(await new LogicaNavegador().recuperarMediciones()).toEqual(lista);

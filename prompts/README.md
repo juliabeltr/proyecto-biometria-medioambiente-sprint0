@@ -11,5 +11,6 @@ Cada fichero es el prompt que se dio a la IA junto con el diseño indicado en `d
 | `05_gui_prompt.md` | `doc/gui_design.md` | `src/gui/` |
 | `06_frontend_business_logic_prompt.md` | `doc/frontend_business_logic_design.md` | `src/frontend_business_logic/` (lógica real) |
 | `07_communication_servir_web_prompt.md` | `doc/communication_design.md` | ampliación de `src/communication/` |
+| `08_cambio_sensorid_ubicacion_clave_prompt.md` | todos los `doc/*_design.md` con `Medicion` | cambio del modelo de datos en `src/` |
 
 Nota: los prompts se escribieron con los nombres de componente anteriores (`bd`, `logica`, `rest`, `navegador`, `ux`); aquí aparecen ya con los nombres actuales.

@@ -17,8 +17,7 @@ public class ProcesadorBeacons {
 
     private final LogicaTelefono logica;
     private final FiltroDuplicados filtro = new FiltroDuplicados();
-    private final double latitud;
-    private final double longitud;
+    private final Punto ubicacion;
 
     /*
      * --------------------------------------------------------------
@@ -26,21 +25,19 @@ public class ProcesadorBeacons {
      *            mediciones y la ubicación fija del Sprint 0.
      *
      * Diseño lógico:
-     *     logica: LogicaTelefono, latitud: R, longitud: R
+     *     logica: LogicaTelefono, ubicacion: Punto
      *         --> ProcesadorBeacons() -->
      *
      * Parámetros:
      *     logica: LogicaTelefono. Lógica real o fake.
-     *     latitud: R. Latitud que se asigna a las mediciones.
-     *     longitud: R. Longitud que se asigna a las mediciones.
+     *     ubicacion: Punto. Ubicación que se asigna a las mediciones.
      * Retorno: ninguno.
      * Errores: ninguno.
      * --------------------------------------------------------------
      */
-    public ProcesadorBeacons(LogicaTelefono logica, double latitud, double longitud) {
+    public ProcesadorBeacons(LogicaTelefono logica, Punto ubicacion) {
         this.logica = logica;
-        this.latitud = latitud;
-        this.longitud = longitud;
+        this.ubicacion = ubicacion;
     }
 
     /*
@@ -50,22 +47,23 @@ public class ProcesadorBeacons {
      *            repetida; en otro caso envía la medición.
      *
      * Diseño lógico:
-     *     bytes: [Z], fechaHora: Text --> procesar() -->
+     *     bytes: [Z], sensorId: Text, fechaHora: Text --> procesar() -->
      *       resultado: B <--
      *
      * Parámetros:
      *     bytes: [Z]. Bytes del anuncio recibido.
+     *     sensorId: Text. Dirección Bluetooth del emisor del anuncio.
      *     fechaHora: Text. Fecha y hora ISO 8601 UTC de la recepción.
      * Retorno: B. true si ha enviado la medición; false si la ha ignorado.
      * Errores: ninguno.
      * --------------------------------------------------------------
      */
-    public boolean procesar(byte[] bytes, String fechaHora) {
+    public boolean procesar(byte[] bytes, String sensorId, String fechaHora) {
         if (bytes == null || bytes.length < LONGITUD_MINIMA_TRAMA) {
             return false;
         }
         TramaIBeacon trama = new TramaIBeacon(bytes);
-        Medicion medicion = ConversorBeacon.convertir(trama, fechaHora, latitud, longitud);
+        Medicion medicion = ConversorBeacon.convertir(trama, sensorId, fechaHora, ubicacion);
         if (medicion == null) {
             return false;
         }

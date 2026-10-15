@@ -19,22 +19,26 @@ import org.junit.Test;
 
 public class MedicionTest {
 
+    private static final String SENSOR = "AA:BB:CC:DD:EE:01";
+
     @Test
-    public void elJSONTieneLosCincoCamposDelServidor() throws Exception {
-        Medicion m = new Medicion(0, "CO2", 235, 38.9675, -0.1806, "2026-10-03T10:00:00Z");
+    public void elJSONTieneLosCincoCamposDelServidorYLaUbicacionEsUnObjeto() throws Exception {
+        Medicion m = new Medicion(SENSOR, "CO2", 235, new Punto(38.9675, -0.1806), "2026-10-03T10:00:00Z");
 
         JSONObject json = new JSONObject(m.aJSON());
 
+        assertEquals(SENSOR, json.getString("sensorId"));
         assertEquals("CO2", json.getString("tipo"));
         assertEquals(235.0, json.getDouble("valor"), 0.0);
-        assertEquals(38.9675, json.getDouble("latitud"), 0.0);
-        assertEquals(-0.1806, json.getDouble("longitud"), 0.0);
+        JSONObject ubicacion = json.getJSONObject("ubicacion");
+        assertEquals(38.9675, ubicacion.getDouble("latitud"), 0.0);
+        assertEquals(-0.1806, ubicacion.getDouble("longitud"), 0.0);
         assertEquals("2026-10-03T10:00:00Z", json.getString("fechaHora"));
     }
 
     @Test
-    public void elJSONNoIncluyeElId() throws Exception {
-        Medicion m = new Medicion(7, "CO2", 235, 38.96, -0.18, "2026-10-03T10:00:00Z");
+    public void elJSONTieneExactamenteLosCincoCampos() throws Exception {
+        Medicion m = new Medicion(SENSOR, "CO2", 235, new Punto(38.96, -0.18), "2026-10-03T10:00:00Z");
 
         assertFalse(new JSONObject(m.aJSON()).has("id"));
         assertEquals(5, new JSONObject(m.aJSON()).length());
@@ -42,7 +46,7 @@ public class MedicionTest {
 
     @Test
     public void losNumerosUsanPuntoDecimal() {
-        Medicion m = new Medicion(0, "TEMP", 21.5, 38.9675, -0.1806, "2026-10-03T10:00:00Z");
+        Medicion m = new Medicion(SENSOR, "TEMP", 21.5, new Punto(38.9675, -0.1806), "2026-10-03T10:00:00Z");
 
         String json = m.aJSON();
 
@@ -53,25 +57,33 @@ public class MedicionTest {
 
     @Test
     public void admiteValoresNegativos() throws Exception {
-        Medicion m = new Medicion(0, "TEMP", -12, 38.96, -0.18, "2026-10-03T10:00:00Z");
+        Medicion m = new Medicion(SENSOR, "TEMP", -12, new Punto(38.96, -0.18), "2026-10-03T10:00:00Z");
 
         assertEquals(-12.0, new JSONObject(m.aJSON()).getDouble("valor"), 0.0);
     }
 
     @Test(expected = IllegalStateException.class)
     public void unNumeroNoRepresentableEnJSONLanzaError() {
-        new Medicion(0, "CO2", Double.NaN, 0, 0, "2026-10-03T10:00:00Z").aJSON();
+        new Medicion(SENSOR, "CO2", Double.NaN, new Punto(0, 0), "2026-10-03T10:00:00Z").aJSON();
     }
 
     @Test
     public void losGettersDevuelvenLosDatos() {
-        Medicion m = new Medicion(3, "RUIDO", 58, 1.5, 2.5, "2026-10-03T10:00:00Z");
+        Medicion m = new Medicion(SENSOR, "RUIDO", 58, new Punto(1.5, 2.5), "2026-10-03T10:00:00Z");
 
-        assertEquals(3, m.getId());
         assertEquals("RUIDO", m.getTipo());
         assertEquals(58.0, m.getValor(), 0.0);
-        assertEquals(1.5, m.getLatitud(), 0.0);
-        assertEquals(2.5, m.getLongitud(), 0.0);
+        assertEquals(SENSOR, m.getSensorId());
+        assertEquals(1.5, m.getUbicacion().getLatitud(), 0.0);
+        assertEquals(2.5, m.getUbicacion().getLongitud(), 0.0);
         assertEquals("2026-10-03T10:00:00Z", m.getFechaHora());
+    }
+
+    @Test
+    public void unPuntoDevuelveSuLatitudYSuLongitud() {
+        Punto p = new Punto(-33.8688, 151.2093);
+
+        assertEquals(-33.8688, p.getLatitud(), 0.0);
+        assertEquals(151.2093, p.getLongitud(), 0.0);
     }
 }

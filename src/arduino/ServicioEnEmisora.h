@@ -116,8 +116,8 @@ public:
     Caracteristica(
       const char * nombreCaracteristica_,
       uint8_t props,
-      BleSecurityMode permisoRead,
-      BleSecurityMode permisoWrite,
+      SecureMode_t permisoRead,
+      SecureMode_t permisoWrite,
       uint8_t tam
     )
       :
@@ -163,8 +163,8 @@ public:
      * --------------------------------------------------------------
      */
     void asignarPermisos(
-      BleSecurityMode permisoRead,
-      BleSecurityMode permisoWrite
+      SecureMode_t permisoRead,
+      SecureMode_t permisoWrite
     ) {
 
       (*this).laCaracteristica.setPermission(
@@ -207,8 +207,8 @@ public:
      */
     void asignarPropiedadesPermisosYTamanyoDatos(
       uint8_t props,
-      BleSecurityMode permisoRead,
-      BleSecurityMode permisoWrite,
+      SecureMode_t permisoRead,
+      SecureMode_t permisoWrite,
       uint8_t tam
     ) {
 

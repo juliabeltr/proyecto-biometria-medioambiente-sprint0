@@ -19,10 +19,11 @@ import org.junit.Test;
 public class ConversorBeaconTest {
 
     private static final String FECHA = "2026-10-03T10:00:00Z";
+    private static final String SENSOR = "AA:BB:CC:DD:EE:01";
 
     private static Medicion convertir(String uuid, int major, int minor) {
         TramaIBeacon trama = new TramaIBeacon(TramasDePrueba.crear(uuid, major, minor));
-        return ConversorBeacon.convertir(trama, FECHA, 38.9675, -0.1806);
+        return ConversorBeacon.convertir(trama, SENSOR, FECHA, new Punto(38.9675, -0.1806));
     }
 
     @Test
@@ -60,19 +61,13 @@ public class ConversorBeaconTest {
     }
 
     @Test
-    public void usaLaFechaYLaUbicacionRecibidas() {
+    public void usaElSensorLaFechaYLaUbicacionRecibidos() {
         Medicion m = convertir(TramasDePrueba.UUID_NUESTRO, TramasDePrueba.major(11, 1), 235);
 
+        assertEquals(SENSOR, m.getSensorId());
         assertEquals(FECHA, m.getFechaHora());
-        assertEquals(38.9675, m.getLatitud(), 0.0);
-        assertEquals(-0.1806, m.getLongitud(), 0.0);
-    }
-
-    @Test
-    public void asignaIdCeroPorqueLoAsignaLaBaseDeDatos() {
-        Medicion m = convertir(TramasDePrueba.UUID_NUESTRO, TramasDePrueba.major(11, 1), 235);
-
-        assertEquals(0, m.getId());
+        assertEquals(38.9675, m.getUbicacion().getLatitud(), 0.0);
+        assertEquals(-0.1806, m.getUbicacion().getLongitud(), 0.0);
     }
 
     @Test
@@ -89,6 +84,6 @@ public class ConversorBeaconTest {
 
     @Test
     public void ignoraUnaTramaNula() {
-        assertNull(ConversorBeacon.convertir(null, FECHA, 0, 0));
+        assertNull(ConversorBeacon.convertir(null, SENSOR, FECHA, new Punto(0, 0)));
     }
 }

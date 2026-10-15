@@ -14,16 +14,15 @@ import org.json.JSONObject;
 // =============================================================================
 
 /**
- * Medicion = ( id: N, tipo: Text, valor: R, latitud: R, longitud: R,
+ * Medicion = ( sensorId: Text, tipo: Text, valor: R, ubicacion: Punto,
  *              fechaHora: Text )
  */
 public final class Medicion {
 
-    private final int id;
+    private final String sensorId;
     private final String tipo;
     private final double valor;
-    private final double latitud;
-    private final double longitud;
+    private final Punto ubicacion;
     private final String fechaHora;
 
     /*
@@ -31,38 +30,21 @@ public final class Medicion {
      * Propósito: crea una medición.
      *
      * Diseño lógico:
-     *     id: N, tipo: Text, valor: R, latitud: R, longitud: R,
+     *     sensorId: Text, tipo: Text, valor: R, ubicacion: Punto,
      *     fechaHora: Text --> Medicion() -->
      *
-     * Parámetros: los seis campos de la medición.
+     * Parámetros: los cinco campos de la medición.
      * Retorno: ninguno.
      * Errores: ninguno.
      * --------------------------------------------------------------
      */
-    public Medicion(int id, String tipo, double valor, double latitud,
-                    double longitud, String fechaHora) {
-        this.id = id;
+    public Medicion(String sensorId, String tipo, double valor,
+                    Punto ubicacion, String fechaHora) {
+        this.sensorId = sensorId;
         this.tipo = tipo;
         this.valor = valor;
-        this.latitud = latitud;
-        this.longitud = longitud;
+        this.ubicacion = ubicacion;
         this.fechaHora = fechaHora;
-    }
-
-    /*
-     * --------------------------------------------------------------
-     * Propósito: devuelve el campo id de la medición.
-     *
-     * Diseño lógico:
-     *     id: N <-- getId() <--
-     *
-     * Parámetros: ninguno.
-     * Retorno: id: N.
-     * Errores: ninguno.
-     * --------------------------------------------------------------
-     */
-    public int getId() {
-        return id;
     }
 
     /*
@@ -99,34 +81,34 @@ public final class Medicion {
 
     /*
      * --------------------------------------------------------------
-     * Propósito: devuelve el campo latitud de la medición.
+     * Propósito: devuelve el campo sensorId de la medición.
      *
      * Diseño lógico:
-     *     latitud: R <-- getLatitud() <--
+     *     sensorId: Text <-- getSensorId() <--
      *
      * Parámetros: ninguno.
-     * Retorno: latitud: R.
+     * Retorno: sensorId: Text.
      * Errores: ninguno.
      * --------------------------------------------------------------
      */
-    public double getLatitud() {
-        return latitud;
+    public String getSensorId() {
+        return sensorId;
     }
 
     /*
      * --------------------------------------------------------------
-     * Propósito: devuelve el campo longitud de la medición.
+     * Propósito: devuelve el campo ubicacion de la medición.
      *
      * Diseño lógico:
-     *     longitud: R <-- getLongitud() <--
+     *     ubicacion: Punto <-- getUbicacion() <--
      *
      * Parámetros: ninguno.
-     * Retorno: longitud: R.
+     * Retorno: ubicacion: Punto.
      * Errores: ninguno.
      * --------------------------------------------------------------
      */
-    public double getLongitud() {
-        return longitud;
+    public Punto getUbicacion() {
+        return ubicacion;
     }
 
     /*
@@ -148,8 +130,8 @@ public final class Medicion {
     /*
      * --------------------------------------------------------------
      * Propósito: devuelve la medición como objeto JSON con los campos
-     *            tipo, valor, latitud, longitud y fechaHora (sin id, que
-     *            asigna la base de datos). Los números usan punto decimal.
+     *            sensorId, tipo, valor, ubicacion (objeto con latitud y
+     *            longitud) y fechaHora. Los números usan punto decimal.
      *
      * Diseño lógico:
      *     texto: Text <-- aJSON() <--
@@ -163,10 +145,13 @@ public final class Medicion {
     public String aJSON() {
         try {
             JSONObject json = new JSONObject();
+            JSONObject jsonUbicacion = new JSONObject();
+            jsonUbicacion.put("latitud", ubicacion.getLatitud());
+            jsonUbicacion.put("longitud", ubicacion.getLongitud());
+            json.put("sensorId", sensorId);
             json.put("tipo", tipo);
             json.put("valor", valor);
-            json.put("latitud", latitud);
-            json.put("longitud", longitud);
+            json.put("ubicacion", jsonUbicacion);
             json.put("fechaHora", fechaHora);
             return json.toString();
         } catch (JSONException e) {

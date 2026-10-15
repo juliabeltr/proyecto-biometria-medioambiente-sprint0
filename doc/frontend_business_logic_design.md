@@ -2,7 +2,9 @@
 
 ## 1. Diseño del componente
 
-Medicion = ( id: N, tipo: Text, valor: R, latitud: R, longitud: R, fechaHora: Text )
+Punto = ( latitud: R, longitud: R )
+
+Medicion = ( sensorId: Text, tipo: Text, valor: R, ubicacion: Punto, fechaHora: Text )
 
 ### Interfaz que consume la interfaz gráfica
 
@@ -71,7 +73,7 @@ Es un subconjunto de la lógica de negocio del servidor (`business_logic_design.
 - `urlBase` es la dirección del servidor. Si está vacía, se usa el mismo origen desde el que se cargó la página.
 - `LogicaNavegadorFake` simula al servidor para desarrollar la interfaz sin depender de él. No hace peticiones:
   - si no se le pasa ninguna lista de mediciones, usa un conjunto de ejemplo con al menos una medición de CO2;
-  - `recuperarUltimaMedicion()` devuelve la medición de mayor `fechaHora` y, si hay empate, la de mayor `id`; `null` si no hay mediciones;
+  - `recuperarUltimaMedicion()` devuelve la medición de mayor `fechaHora` y, si hay empate, la de mayor `sensorId`; `null` si no hay mediciones;
   - `recuperarMediciones()` devuelve una lista vacía si no hay mediciones;
   - si `falla` es `true`, ambas operaciones terminan con un error simulado, para probar cómo reacciona la interfaz.
 - Ninguna de las dos implementaciones accede al DOM, contiene HTML ni valida reglas de negocio.
@@ -89,7 +91,7 @@ Es un subconjunto de la lógica de negocio del servidor (`business_logic_design.
   - lista de mediciones con datos y vacía;
   - la dirección que se llama con `urlBase` vacío y con `urlBase` indicado.
 - Se generan tests automáticos (Jest) para `LogicaNavegadorFake`:
-  - última medición, desempate por `id` y comparación de instantes con zonas horarias distintas;
+  - última medición, desempate por `sensorId` y comparación de instantes con zonas horarias distintas;
   - sin mediciones (`null`) y lista vacía;
   - uso de los datos de ejemplo cuando no se pasa ninguna lista;
   - error simulado en ambas operaciones.

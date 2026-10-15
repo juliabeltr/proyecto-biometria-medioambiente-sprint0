@@ -12,8 +12,8 @@ import android.util.Log;
 // =============================================================================
 // EscanerBeacons.java
 //
-// Descripción: escanea anuncios Bluetooth Low Energy y entrega sus bytes a un
-//              EscuchadorBeacons.
+// Descripción: escanea anuncios Bluetooth Low Energy y entrega sus bytes y la
+//              dirección del emisor a un EscuchadorBeacons.
 // Autor:       Júlia Beltrán Girbés
 // Fecha:       2026
 // Copyright:   Proyecto Biometría y Medioambiente, Sprint 0
@@ -135,7 +135,8 @@ public class EscanerBeacons {
     /*
      * --------------------------------------------------------------
      * Propósito: crea el callback de Android que entrega los bytes de
-     *            cada anuncio al escuchador y anota los fallos.
+     *            cada anuncio, y la dirección del emisor, al escuchador
+     *            y anota los fallos.
      *
      * Diseño lógico:
      *     crearCallback() --> callback
@@ -151,7 +152,7 @@ public class EscanerBeacons {
             public void onScanResult(int tipoCallback, ScanResult resultado) {
                 ScanRecord registro = resultado.getScanRecord();
                 if (registro != null && registro.getBytes() != null) {
-                    escuchador.alRecibirAnuncio(registro.getBytes());
+                    escuchador.alRecibirAnuncio(registro.getBytes(), resultado.getDevice().getAddress());
                 }
             }
 

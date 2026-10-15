@@ -12,13 +12,14 @@
 // =============================================================================
 
 /*
- * Medicion = ( id: N, tipo: Text, valor: R, latitud: R, longitud: R,
+ * Punto = ( latitud: R, longitud: R )
+ * Medicion = ( sensorId: Text, tipo: Text, valor: R, ubicacion: Punto,
  *              fechaHora: Text )
  */
 const MEDICIONES_DE_EJEMPLO = Object.freeze([
-    { id: 1, tipo: "TEMP", valor: 21.5, latitud: 38.9675, longitud: -0.1806, fechaHora: "2026-10-02T09:00:00Z" },
-    { id: 2, tipo: "RUIDO", valor: 58, latitud: 38.9675, longitud: -0.1806, fechaHora: "2026-10-02T09:30:00Z" },
-    { id: 3, tipo: "CO2", valor: 412, latitud: 38.9675, longitud: -0.1806, fechaHora: "2026-10-02T10:00:00Z" },
+    { sensorId: "sensor-demo-1", tipo: "TEMP", valor: 21.5, ubicacion: { latitud: 38.9675, longitud: -0.1806 }, fechaHora: "2026-10-02T09:00:00Z" },
+    { sensorId: "sensor-demo-1", tipo: "RUIDO", valor: 58, ubicacion: { latitud: 38.9675, longitud: -0.1806 }, fechaHora: "2026-10-02T09:30:00Z" },
+    { sensorId: "sensor-demo-1", tipo: "CO2", valor: 412, ubicacion: { latitud: 38.9675, longitud: -0.1806 }, fechaHora: "2026-10-02T10:00:00Z" },
 ]);
 
 class LogicaNavegadorFake {
@@ -48,7 +49,7 @@ class LogicaNavegadorFake {
     /*
      * --------------------------------------------------------------
      * Propósito: devuelve la medición de mayor fechaHora; en caso de
-     *            empate, la de mayor id.
+     *            empate, la de mayor sensorId.
      *
      * Diseño lógico:
      *     Medicion <-- recuperarUltimaMedicion() <--
@@ -107,7 +108,7 @@ class LogicaNavegadorFake {
     /*
      * --------------------------------------------------------------
      * Propósito: indica si una medición es posterior a otra (mayor
-     *            fechaHora, o mayor id si coinciden).
+     *            fechaHora, o mayor sensorId si coinciden).
      *
      * Diseño lógico:
      *     a: Medicion, b: Medicion --> esPosterior() --> B
@@ -122,7 +123,7 @@ class LogicaNavegadorFake {
     #esPosterior(a, b) {
         const instanteA = Date.parse(a.fechaHora);
         const instanteB = Date.parse(b.fechaHora);
-        return instanteA > instanteB || (instanteA === instanteB && a.id > b.id);
+        return instanteA > instanteB || (instanteA === instanteB && a.sensorId > b.sensorId);
     }
 }
 

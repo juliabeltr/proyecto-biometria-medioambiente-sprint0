@@ -15,7 +15,8 @@ const TEXTO_SIN_DATOS = "Todavía no hay mediciones";
 const TEXTO_ERROR = "No se pudo obtener la medición";
 
 /*
- * Medicion = ( id: N, tipo: Text, valor: R, latitud: R, longitud: R,
+ * Punto = ( latitud: R, longitud: R )
+ * Medicion = ( sensorId: Text, tipo: Text, valor: R, ubicacion: Punto,
  *              fechaHora: Text )
  */
 class ControladorUX {

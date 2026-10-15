@@ -25,10 +25,10 @@ const ServidorREST = require("./servidorREST");
  */
 function medicionDePrueba(cambios = {}) {
     return {
+        sensorId: "AA:BB:CC:DD:EE:01",
         tipo: "CO2",
         valor: 412.5,
-        latitud: 38.96,
-        longitud: -0.18,
+        ubicacion: { latitud: 38.96, longitud: -0.18 },
         fechaHora: "2026-10-02T10:00:00Z",
         ...cambios,
     };
@@ -75,12 +75,13 @@ describe("ServidorREST", () => {
             expect(logica.guardarMedicion).toHaveBeenCalledWith(medicionDePrueba());
         });
 
-        test("pasa el id a la lógica sin usarlo (la lógica lo ignora)", async () => {
-            const respuesta = await request(app)
-                .post("/mediciones")
-                .send(medicionDePrueba({ id: 99 }));
+        test("medición ya guardada (la lógica devuelve false): 400", async () => {
+            logica.guardarMedicion.mockReturnValue(false);
 
-            expect(respuesta.status).toBe(201);
+            const respuesta = await request(app).post("/mediciones").send(medicionDePrueba());
+
+            expect(respuesta.status).toBe(400);
+            expect(respuesta.body.error).toContain("ya guardados");
         });
 
         test("JSON mal formado: 400 y no llama a la lógica", async () => {
@@ -94,7 +95,7 @@ describe("ServidorREST", () => {
             expect(logica.guardarMedicion).not.toHaveBeenCalled();
         });
 
-        test.each(["tipo", "valor", "latitud", "longitud", "fechaHora"])(
+        test.each(["sensorId", "tipo", "valor", "ubicacion", "fechaHora"])(
             "falta el campo %s: 400 y no llama a la lógica",
             async (campo) => {
                 const medicion = medicionDePrueba();
@@ -148,8 +149,8 @@ describe("ServidorREST", () => {
     describe("GET /mediciones", () => {
         test("devuelve la lista de mediciones: 200", async () => {
             const todas = [
-                { id: 1, ...medicionDePrueba() },
-                { id: 2, ...medicionDePrueba({ tipo: "TEMP", valor: 21 }) },
+                medicionDePrueba(),
+                medicionDePrueba({ tipo: "TEMP", valor: 21 }),
             ];
             logica.recuperarMediciones.mockReturnValue(todas);
 
@@ -180,7 +181,7 @@ describe("ServidorREST", () => {
 
     describe("GET /mediciones/ultima", () => {
         test("devuelve la última medición: 200", async () => {
-            const ultima = { id: 7, ...medicionDePrueba() };
+            const ultima = medicionDePrueba();
             logica.recuperarUltimaMedicion.mockReturnValue(ultima);
 
             const respuesta = await request(app).get("/mediciones/ultima");
@@ -263,7 +264,7 @@ describe("ServidorREST", () => {
         });
 
         test("servir la web no altera las rutas de la API", async () => {
-            logica.recuperarUltimaMedicion.mockReturnValue({ id: 1, ...medicionDePrueba() });
+            logica.recuperarUltimaMedicion.mockReturnValue(medicionDePrueba());
 
             const ultima = await request(appConWeb).get("/mediciones/ultima");
             const guardar = await request(appConWeb).post("/mediciones").send(medicionDePrueba());

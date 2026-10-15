@@ -11,12 +11,15 @@
 
 const Database = require("better-sqlite3");
 
-const CAMPOS_OBLIGATORIOS = ["tipo", "valor", "latitud", "longitud", "fechaHora"];
+const CAMPOS_OBLIGATORIOS = ["sensorId", "tipo", "valor", "ubicacion", "fechaHora"];
 
 /*
- * Medicion = ( id: N, tipo: Text, valor: R, latitud: R, longitud: R,
+ * Punto = ( latitud: R, longitud: R )
+ * Medicion = ( sensorId: Text, tipo: Text, valor: R, ubicacion: Punto,
  *              fechaHora: Text )
  */
+const SELECT_MEDICIONES = `SELECT sensorId, tipo, valor, ubicacion, fechaHora
+                           FROM MEDICIONES`;
 class RepositorioMediciones {
 
     /*
@@ -39,12 +42,12 @@ class RepositorioMediciones {
             this.conexion = new Database(ruta);
             this.conexion.exec(`
                 CREATE TABLE IF NOT EXISTS MEDICIONES (
-                    id        INTEGER PRIMARY KEY AUTOINCREMENT,
+                    sensorId  TEXT NOT NULL,
                     tipo      TEXT NOT NULL,
                     valor     REAL NOT NULL,
-                    latitud   REAL NOT NULL,
-                    longitud  REAL NOT NULL,
-                    fechaHora TEXT NOT NULL
+                    ubicacion POINT NOT NULL,
+                    fechaHora TEXT NOT NULL,
+                    PRIMARY KEY (sensorId, fechaHora)
                 )
             `);
         } catch (error) {
@@ -54,16 +57,18 @@ class RepositorioMediciones {
 
     /*
      * --------------------------------------------------------------
-     * Propósito: guarda una medición. El id lo asigna la BD, por lo que
-     *            el id recibido se ignora.
+     * Propósito: guarda una medición. La clave primaria es (sensorId,
+     *            fechaHora): si ya hay una medición de ese sensor en ese
+     *            instante, no se guarda.
      *
      * Diseño lógico:
      *     m: Medicion --> insertar() -->
-     *       id: N     <--
+     *       resultado: B <--
      *
      * Parámetros:
      *     m: Medicion. Medición a guardar.
-     * Retorno: id: N. Identificador asignado a la medición.
+     * Retorno: resultado: B. true si se ha guardado; false si ya existía
+     *          una medición con la misma clave primaria.
      * Errores: Error si falta algún campo obligatorio o si falla la BD.
      * --------------------------------------------------------------
      */
@@ -72,11 +77,11 @@ class RepositorioMediciones {
         try {
             const resultado = this.conexion
                 .prepare(
-                    `INSERT INTO MEDICIONES (tipo, valor, latitud, longitud, fechaHora)
+                    `INSERT OR IGNORE INTO MEDICIONES (sensorId, tipo, valor, ubicacion, fechaHora)
                      VALUES (?, ?, ?, ?, ?)`
                 )
-                .run(m.tipo, m.valor, m.latitud, m.longitud, m.fechaHora);
-            return Number(resultado.lastInsertRowid);
+                .run(m.sensorId, m.tipo, m.valor, puntoATexto(m.ubicacion), m.fechaHora);
+            return resultado.changes === 1;
         } catch (error) {
             throw new Error("Error de base de datos al insertar la medición");
         }
@@ -85,7 +90,7 @@ class RepositorioMediciones {
     /*
      * --------------------------------------------------------------
      * Propósito: recupera la última medición: la de mayor fechaHora y,
-     *            en caso de empate, la de mayor id.
+     *            en caso de empate, la de mayor sensorId.
      *
      * Diseño lógico:
      *     Medicion <-- recuperarUltima() <--
@@ -98,14 +103,9 @@ class RepositorioMediciones {
     recuperarUltima() {
         try {
             const fila = this.conexion
-                .prepare(
-                    `SELECT id, tipo, valor, latitud, longitud, fechaHora
-                     FROM MEDICIONES
-                     ORDER BY fechaHora DESC, id DESC
-                     LIMIT 1`
-                )
+                .prepare(`${SELECT_MEDICIONES} ORDER BY fechaHora DESC, sensorId DESC LIMIT 1`)
                 .get();
-            return fila === undefined ? null : fila;
+            return fila === undefined ? null : filaAMedicion(fila);
         } catch (error) {
             throw new Error("Error de base de datos al recuperar la última medición");
         }
@@ -113,7 +113,8 @@ class RepositorioMediciones {
 
     /*
      * --------------------------------------------------------------
-     * Propósito: recupera todas las mediciones guardadas, ordenadas por id.
+     * Propósito: recupera todas las mediciones guardadas, ordenadas por fechaHora
+     *            y, en caso de empate, por sensorId.
      *
      * Diseño lógico:
      *     [Medicion] <-- recuperarTodas() <--
@@ -126,12 +127,9 @@ class RepositorioMediciones {
     recuperarTodas() {
         try {
             return this.conexion
-                .prepare(
-                    `SELECT id, tipo, valor, latitud, longitud, fechaHora
-                     FROM MEDICIONES
-                     ORDER BY id ASC`
-                )
-                .all();
+                .prepare(`${SELECT_MEDICIONES} ORDER BY fechaHora ASC, sensorId ASC`)
+                .all()
+                .map(filaAMedicion);
         } catch (error) {
             throw new Error("Error de base de datos al recuperar las mediciones");
         }
@@ -140,7 +138,8 @@ class RepositorioMediciones {
     /*
      * --------------------------------------------------------------
      * Propósito: comprueba que la medición trae los cinco campos
-     *            obligatorios (restricción NOT NULL de la tabla).
+     *            obligatorios (restricción NOT NULL de la tabla) y que
+     *            la ubicación trae latitud y longitud.
      *
      * Diseño lógico:
      *     m: Medicion --> exigirCamposObligatorios() -->
@@ -160,7 +159,68 @@ class RepositorioMediciones {
                 throw new Error(`Medición inválida: falta el campo ${campo}`);
             }
         }
+        const { latitud, longitud } = m.ubicacion;
+        if (latitud === null || latitud === undefined || longitud === null || longitud === undefined) {
+            throw new Error("Medición inválida: falta la latitud o la longitud de ubicacion");
+        }
     }
+}
+
+/*
+ * --------------------------------------------------------------
+ * Propósito: convierte un Punto al texto WKT que se guarda en la
+ *            columna POINT: "POINT(longitud latitud)".
+ *
+ * Diseño lógico:
+ *     p: Punto --> puntoATexto() --> texto: Text
+ *
+ * Parámetros:
+ *     p: Punto. Ubicación a guardar.
+ * Retorno: texto: Text. Por ejemplo "POINT(-0.1806 38.9675)".
+ * Errores: ninguno.
+ * --------------------------------------------------------------
+ */
+function puntoATexto(p) {
+    return `POINT(${p.longitud} ${p.latitud})`;
+}
+
+/*
+ * --------------------------------------------------------------
+ * Propósito: convierte el texto WKT de la columna POINT en un Punto.
+ *
+ * Diseño lógico:
+ *     texto: Text --> textoAPunto() --> p: Punto
+ *
+ * Parámetros:
+ *     texto: Text. Por ejemplo "POINT(-0.1806 38.9675)".
+ * Retorno: p: Punto.
+ * Errores: Error si el texto no tiene formato POINT(longitud latitud).
+ * --------------------------------------------------------------
+ */
+function textoAPunto(texto) {
+    const partes = /^POINT\(\s*(\S+)\s+(\S+)\s*\)$/.exec(texto);
+    if (partes === null) {
+        throw new Error("Ubicación guardada con formato no válido");
+    }
+    return { latitud: Number(partes[2]), longitud: Number(partes[1]) };
+}
+
+/*
+ * --------------------------------------------------------------
+ * Propósito: convierte una fila de la tabla en una Medicion
+ *            (la columna ubicacion pasa de texto WKT a Punto).
+ *
+ * Diseño lógico:
+ *     fila: Fila --> filaAMedicion() --> m: Medicion
+ *
+ * Parámetros:
+ *     fila: Fila. Objeto con una propiedad por columna de MEDICIONES.
+ * Retorno: m: Medicion.
+ * Errores: Error si la columna ubicacion no tiene formato válido.
+ * --------------------------------------------------------------
+ */
+function filaAMedicion(fila) {
+    return { ...fila, ubicacion: textoAPunto(fila.ubicacion) };
 }
 
 module.exports = RepositorioMediciones;

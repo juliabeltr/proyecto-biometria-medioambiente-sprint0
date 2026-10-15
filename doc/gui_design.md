@@ -2,7 +2,9 @@
 
 ## 1. Diseño del componente
 
-Medicion = ( id: N, tipo: Text, valor: R, latitud: R, longitud: R, fechaHora: Text )
+Punto = ( latitud: R, longitud: R )
+
+Medicion = ( sensorId: Text, tipo: Text, valor: R, ubicacion: Punto, fechaHora: Text )
 
 ### Descripción de la pantalla
 

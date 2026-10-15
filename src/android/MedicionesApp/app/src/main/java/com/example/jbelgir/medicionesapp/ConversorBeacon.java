@@ -25,26 +25,26 @@ public final class ConversorBeacon {
 
     /*
      * --------------------------------------------------------------
-     * Propósito: convierte la trama en una Medicion con la fecha y la
-     *            ubicación recibidas (la trama no las lleva).
+     * Propósito: convierte la trama en una Medicion con el sensorId, la
+     *            fecha y la ubicación recibidos (la trama no los lleva).
      *
      * Diseño lógico:
-     *     trama: TramaIBeacon, fechaHora: Text, latitud: R, longitud: R
-     *         --> convertir() --x
+     *     trama: TramaIBeacon, sensorId: Text, fechaHora: Text,
+     *     ubicacion: Punto --> convertir() --x
      *         medicion: Medicion <--
      *
      * Parámetros:
      *     trama: TramaIBeacon. Anuncio recibido.
+     *     sensorId: Text. Dirección Bluetooth del emisor.
      *     fechaHora: Text. Fecha y hora ISO 8601 de la recepción.
-     *     latitud: R. Latitud de la medición.
-     *     longitud: R. Longitud de la medición.
+     *     ubicacion: Punto. Ubicación de la medición.
      * Retorno: Medicion, o null si el UUID no es el del proyecto o el
      *          tipo no es 11, 12 o 13.
      * Errores: ninguno.
      * --------------------------------------------------------------
      */
-    public static Medicion convertir(TramaIBeacon trama, String fechaHora,
-                                     double latitud, double longitud) {
+    public static Medicion convertir(TramaIBeacon trama, String sensorId,
+                                     String fechaHora, Punto ubicacion) {
         if (trama == null) {
             return null;
         }
@@ -57,7 +57,7 @@ public final class ConversorBeacon {
             return null;
         }
         double valor = Utilidades.bytesToInt(trama.getMinor());
-        return new Medicion(0, tipo, valor, latitud, longitud, fechaHora);
+        return new Medicion(sensorId, tipo, valor, ubicacion, fechaHora);
     }
 
     /*

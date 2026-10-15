@@ -21,10 +21,10 @@ const RepositorioMediciones = require("./repositorioMediciones");
  */
 function medicionDePrueba(cambios = {}) {
     return {
+        sensorId: "AA:BB:CC:DD:EE:01",
         tipo: "CO2",
         valor: 412.5,
-        latitud: 38.96,
-        longitud: -0.18,
+        ubicacion: { latitud: 38.96, longitud: -0.18 },
         fechaHora: "2026-10-02T10:00:00Z",
         ...cambios,
     };
@@ -44,27 +44,58 @@ describe("RepositorioMediciones", () => {
     });
 
     describe("insertar()", () => {
-        test("guarda una medición y devuelve su id", () => {
-            const id = repositorio.insertar(medicionDePrueba());
+        test("guarda una medición y devuelve true", () => {
+            const resultado = repositorio.insertar(medicionDePrueba());
 
-            expect(id).toBe(1);
-            expect(repositorio.recuperarTodas()).toEqual([
-                { id: 1, ...medicionDePrueba() },
-            ]);
+            expect(resultado).toBe(true);
+            expect(repositorio.recuperarTodas()).toEqual([medicionDePrueba()]);
         });
 
-        test("asigna ids autoincrementales y distintos", () => {
-            const id1 = repositorio.insertar(medicionDePrueba());
-            const id2 = repositorio.insertar(medicionDePrueba());
+        test("la clave primaria es (sensorId, fechaHora)", () => {
+            const claves = repositorio.conexion
+                .prepare("SELECT name FROM pragma_table_info('MEDICIONES') WHERE pk > 0 ORDER BY pk")
+                .all()
+                .map((c) => c.name);
 
-            expect(id2).toBeGreaterThan(id1);
+            expect(claves).toEqual(["sensorId", "fechaHora"]);
         });
 
-        test("ignora el id recibido: lo asigna la base de datos", () => {
-            const id = repositorio.insertar(medicionDePrueba({ id: 999 }));
+        test("no guarda otra medición del mismo sensor en el mismo instante y devuelve false", () => {
+            repositorio.insertar(medicionDePrueba({ valor: 1 }));
 
-            expect(id).toBe(1);
+            expect(repositorio.insertar(medicionDePrueba({ valor: 2 }))).toBe(false);
+            expect(repositorio.recuperarTodas().map((m) => m.valor)).toEqual([1]);
         });
+
+        test("guarda mediciones del mismo instante si son de sensores distintos", () => {
+            expect(repositorio.insertar(medicionDePrueba({ sensorId: "sensor-A" }))).toBe(true);
+            expect(repositorio.insertar(medicionDePrueba({ sensorId: "sensor-B" }))).toBe(true);
+            expect(repositorio.recuperarTodas()).toHaveLength(2);
+        });
+
+        test("guarda mediciones del mismo sensor en instantes distintos", () => {
+            expect(repositorio.insertar(medicionDePrueba({ fechaHora: "2026-10-02T10:00:00Z" }))).toBe(true);
+            expect(repositorio.insertar(medicionDePrueba({ fechaHora: "2026-10-02T10:00:01Z" }))).toBe(true);
+            expect(repositorio.recuperarTodas()).toHaveLength(2);
+        });
+
+        test("guarda la ubicación en una sola columna POINT, con formato POINT(longitud latitud)", () => {
+            repositorio.insertar(medicionDePrueba());
+
+            const fila = repositorio.conexion.prepare("SELECT ubicacion FROM MEDICIONES").get();
+            expect(fila.ubicacion).toBe("POINT(-0.18 38.96)");
+        });
+
+        test("recupera idénticos el sensorId y la ubicación, también con coordenadas negativas", () => {
+            const ubicacion = { latitud: -33.8688, longitud: -151.2093 };
+            repositorio.insertar(medicionDePrueba({ sensorId: "sensor-7", ubicacion }));
+
+            const [medicion] = repositorio.recuperarTodas();
+            expect(medicion.sensorId).toBe("sensor-7");
+            expect(medicion.ubicacion).toEqual(ubicacion);
+            expect(repositorio.recuperarUltima().ubicacion).toEqual(ubicacion);
+        });
+
     });
 
     describe("recuperarUltima()", () => {
@@ -75,14 +106,15 @@ describe("RepositorioMediciones", () => {
             expect(repositorio.recuperarUltima().valor).toBe(2);
         });
 
-        test("desempata por mayor id si la fechaHora coincide", () => {
-            repositorio.insertar(medicionDePrueba({ valor: 1 }));
-            const idUltimo = repositorio.insertar(medicionDePrueba({ valor: 2 }));
+        test("desempata por mayor sensorId si la fechaHora coincide", () => {
+            repositorio.insertar(medicionDePrueba({ sensorId: "sensor-A", valor: 1 }));
+            repositorio.insertar(medicionDePrueba({ sensorId: "sensor-C", valor: 3 }));
+            repositorio.insertar(medicionDePrueba({ sensorId: "sensor-B", valor: 2 }));
 
             const ultima = repositorio.recuperarUltima();
 
-            expect(ultima.id).toBe(idUltimo);
-            expect(ultima.valor).toBe(2);
+            expect(ultima.sensorId).toBe("sensor-C");
+            expect(ultima.valor).toBe(3);
         });
 
         test("devuelve null si no hay mediciones", () => {
@@ -92,9 +124,9 @@ describe("RepositorioMediciones", () => {
 
     describe("recuperarTodas()", () => {
         test("devuelve varias mediciones", () => {
-            repositorio.insertar(medicionDePrueba({ valor: 1 }));
-            repositorio.insertar(medicionDePrueba({ valor: 2 }));
-            repositorio.insertar(medicionDePrueba({ valor: 3 }));
+            repositorio.insertar(medicionDePrueba({ valor: 1, fechaHora: "2026-10-02T10:00:01Z" }));
+            repositorio.insertar(medicionDePrueba({ valor: 2, fechaHora: "2026-10-02T10:00:02Z" }));
+            repositorio.insertar(medicionDePrueba({ valor: 3, fechaHora: "2026-10-02T10:00:03Z" }));
 
             const todas = repositorio.recuperarTodas();
 
@@ -108,7 +140,7 @@ describe("RepositorioMediciones", () => {
     });
 
     describe("datos inválidos", () => {
-        test.each(["tipo", "valor", "latitud", "longitud", "fechaHora"])(
+        test.each(["sensorId", "tipo", "valor", "ubicacion", "fechaHora"])(
             "rechaza una medición sin el campo %s",
             (campo) => {
                 const medicion = medicionDePrueba();
@@ -116,6 +148,19 @@ describe("RepositorioMediciones", () => {
 
                 expect(() => repositorio.insertar(medicion)).toThrow(
                     `falta el campo ${campo}`
+                );
+                expect(repositorio.recuperarTodas()).toEqual([]);
+            }
+        );
+
+        test.each(["latitud", "longitud"])(
+            "rechaza una ubicación sin %s",
+            (campo) => {
+                const ubicacion = { latitud: 38.96, longitud: -0.18 };
+                delete ubicacion[campo];
+
+                expect(() => repositorio.insertar(medicionDePrueba({ ubicacion }))).toThrow(
+                    "falta la latitud o la longitud"
                 );
                 expect(repositorio.recuperarTodas()).toEqual([]);
             }

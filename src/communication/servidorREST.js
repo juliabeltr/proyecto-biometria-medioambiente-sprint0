@@ -17,10 +17,11 @@ const express = require("express");
 const path = require("path");
 
 const CARPETAS_WEB = ["gui", "frontend_business_logic"];
-const CAMPOS_MEDICION = ["tipo", "valor", "latitud", "longitud", "fechaHora"];
+const CAMPOS_MEDICION = ["sensorId", "tipo", "valor", "ubicacion", "fechaHora"];
 
 /*
- * Medicion = ( id: N, tipo: Text, valor: R, latitud: R, longitud: R,
+ * Punto = ( latitud: R, longitud: R )
+ * Medicion = ( sensorId: Text, tipo: Text, valor: R, ubicacion: Punto,
  *              fechaHora: Text )
  */
 class ServidorREST {
@@ -82,7 +83,7 @@ class ServidorREST {
                 return;
             }
             if (!this.logica.guardarMedicion(req.body)) {
-                res.status(400).json({ error: "datos de medición no válidos" });
+                res.status(400).json({ error: "datos de medición no válidos o ya guardados" });
                 return;
             }
             res.status(201).json({ guardada: true });

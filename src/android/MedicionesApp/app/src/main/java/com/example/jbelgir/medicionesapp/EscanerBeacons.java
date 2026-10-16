@@ -139,7 +139,7 @@ public class EscanerBeacons {
      *            y anota los fallos.
      *
      * Diseño lógico:
-     *     crearCallback() --> callback
+     *     callback: ScanCallback <-- crearCallback() <--
      *
      * Parámetros: ninguno.
      * Retorno: ScanCallback.

@@ -20,6 +20,19 @@ public final class ConversorBeacon {
     private static final int ID_TEMPERATURA = 12;
     private static final int ID_RUIDO = 13;
 
+    /*
+     * --------------------------------------------------------------
+     * Propósito: impide crear instancias: la clase solo tiene
+     *            operaciones estáticas.
+     *
+     * Diseño lógico:
+     *     ConversorBeacon() -->
+     *
+     * Parámetros: ninguno.
+     * Retorno: ninguno.
+     * Errores: ninguno.
+     * --------------------------------------------------------------
+     */
     private ConversorBeacon() {
     }
 

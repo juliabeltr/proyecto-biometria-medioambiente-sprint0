@@ -179,6 +179,9 @@ Flujo: `EscanerBeacons` → `MainActivity` → `ProcesadorBeacons` → `LogicaTe
                                    |
                   resultado: B <-- estaEscaneando() <--
                                    |
+                                   |
+          callback: ScanCallback <-- crearCallback() <--
+                                   |
                                    ------------------------------------------------
 
                                 --------- EscuchadorBeacons (interfaz) ---------
@@ -192,24 +195,41 @@ Flujo: `EscanerBeacons` → `MainActivity` → `ProcesadorBeacons` → `LogicaTe
 ### MainActivity
 
 ```text
-                  --------- MainActivity -------------------------
-                  |
-                  |  procesador: ProcesadorBeacons
-                  |  escaner: EscanerBeacons
-                  |
-                  |
-                  iniciarEscucha() -->
-                  |
-                  |
-                  detenerEscucha() -->
-                  |
-                  |
- resultado: B <-- tienePermisos() <--
-                  |
-                  |
-                  pedirPermisos() -->
-                  |
-                  ------------------------------------------------
+                                            --------- MainActivity -------------------------
+                                            |
+                                            |  procesador: ProcesadorBeacons
+                                            |  escaner: EscanerBeacons
+                                            |
+                                            |
+                                            iniciarEscucha() -->
+                                            |
+                                            |
+                                            detenerEscucha() -->
+                                            |
+                                            |
+                           resultado: B <-- tienePermisos() <--
+                                            |
+                                            |
+                                            pedirPermisos() -->
+                                            |
+                                            |
+                       permisos: [Text] <-- permisosNecesarios() <--
+                                            |
+                                            |
+                   real: LogicaTelefono --> logicaConAviso() -->
+                                      logica: LogicaTelefono <--
+                                            |
+                                            |
+                               valor: R --> formatearValor() -->
+                                                   texto: Text <--
+                                            |
+                                            |
+                        fechaHora: Text <-- ahoraUTC() <--
+                                            |
+                                            |
+                           estado: Text --> mostrarEstado() -->
+                                            |
+                                            ------------------------------------------------
 ```
 
 Pantalla única de la app:
@@ -369,6 +389,7 @@ UUID = ( masSignificativos: Z, menosSignificativos: Z )
 - `LogicaTelefonoFake` no usa la red: guarda las mediciones en memoria y devuelve `true`; si `falla` es `true`, no guarda nada y devuelve `false`. Sirve para desarrollar y probar sin servidor.
 - `Medicion.aJSON()` produce un objeto JSON con los campos `sensorId`, `tipo`, `valor`, `ubicacion` (un objeto con `latitud` y `longitud`) y `fechaHora`. Los números usan punto decimal.
 - `EscanerBeacons` escanea sin filtros en modo de baja latencia, y entrega a su `EscuchadorBeacons` los bytes de cada anuncio junto con la dirección Bluetooth del emisor. No interpreta los datos.
+- Las operaciones `permisosNecesarios()`, `logicaConAviso()`, `formatearValor()`, `ahoraUTC()` y `mostrarEstado()` de `MainActivity`, y `crearCallback()` de `EscanerBeacons`, son privadas: apoyo interno de esas clases. Las cajas las dibujan para que el diseño coincida con el código.
 - `MainActivity` solo coordina: pide permisos, arranca y detiene el escaneo, crea `LogicaTelefonoREST` con la dirección escrita en pantalla, y muestra el estado. No contiene lógica de conversión ni de comunicación.
 - Para mostrar si cada medición se ha enviado, `MainActivity` envuelve la lógica en un `LogicaTelefono` que delega en la lógica real y avisa a la pantalla con el resultado. No cambia el comportamiento del envío.
 - Permisos: en Android 12 o posterior se piden `BLUETOOTH_SCAN`, `BLUETOOTH_CONNECT` y `ACCESS_FINE_LOCATION`; en versiones anteriores, `ACCESS_FINE_LOCATION`. No se declara `neverForLocation` para no arriesgar que Android oculte los iBeacon. Sin permisos no se inicia el escaneo.

@@ -30,7 +30,7 @@
         android:hint="Dirección del servidor"
         android:importantForAutofill="no"
         android:inputType="textUri"
-        android:text="http://192.168.1.35:8080" />
+        android:text="http://172.20.10.4:8080" />
 
     <Button
         android:id="@+id/botonIniciar"
